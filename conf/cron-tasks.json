@@ -1,0 +1,10 @@
+[
+	{
+        "time" : "0 30 12 * MON,TUE,WED,THU,FRI * ",
+        "msg" : "Hey! go lunch! go!"
+    }, 
+    {
+        "time" : "0 47 18 * MON,TUE,WED,THU,FRI * ",
+        "msg" : "Hey! let's call it a day!"
+    }
+]
