@@ -1,1 +1,12 @@
-[]
+[
+	"abstract.coffee", 
+	"advice.coffee", 
+	"announce.coffee", 
+	"availability.coffee", 
+	"base64.coffee",
+	"deadline.coffee",
+	"reload.coffee",
+	"roll.coffee",
+	"yelp.coffee",
+	"weather.coffee"
+]
