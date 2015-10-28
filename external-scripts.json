@@ -11,6 +11,5 @@
   "hubot-shipit",
   "hubot-cron-json",
   "hubot-trello",
-  "hubot-trello-organization",
-  "hubot-google-translate"
+  "hubot-trello-organization"
 ]
