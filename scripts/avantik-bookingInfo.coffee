@@ -1,7 +1,12 @@
 # avantik-booking-service.coffee
 # Description:
-#   test web service.
-#
+#   avantik 
+#	need config 
+#		AVANTIK_ENDOPINT - 
+#		AVANTIK_USER_ACCOUNT - 
+#		AVANTIK_USER_PASSWORD - 
+#		AVANTIK_AGENCY_CODE - 
+#		AVANTIK_LANGUAGE_CODE
 # Commands:
 #   hubot avantik service describe
 # Notes:
@@ -10,11 +15,15 @@
 soap = require 'soap'
 {parseString} = require 'xml2js'
 
-url = "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
+
+url = process.env.AVANTIK_ENDPOINT | "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
 
 module.exports = (robot) ->
 	robot.respond /avantik service describe/i, (res) ->
 		describeMethods res
+
+	robot.respond /avantik service initialize/i, (res) ->
+		res.reply JSON.stringify serviceInitialize, null, 4
 
 describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
@@ -23,5 +32,12 @@ describeMethods = (res) ->
 		res.reply JSON.stringify client.describe(), null, 4
 			
 
-
-
+# initialize service
+serviceInitialize = (client) ->
+	args = 
+		strAgencyCode:	process.env.AVANTIK_AGENCY_CODE
+		strUserName:	process.env.AVANTIK_USER_ACCOUNT
+		strPassword:	process.env.AVANTIK_USER_PASSWORD
+		strLanguageCode:	process.env.AVANTIK_LANGUAGE_CODE
+	client.ServiceInitialize args, (err, result) ->
+		result
