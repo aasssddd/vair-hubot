@@ -13,7 +13,6 @@ soap = require 'soap'
 url = "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
 
 describeMethods = (res) ->
-	console.log "Roger in describeMethods"
 	soap.createClient url, (err, client) ->
 		if err
 			res.reply "Err! #{JSON.stringify err, null, 4}"
@@ -27,4 +26,3 @@ module.exports = (robot) ->
 	robot.respond /describe avantik booking service/i, (res) ->
 		res.reply "Roger!"
 		console.log "Roger"
-		describeMethods res
