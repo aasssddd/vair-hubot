@@ -14,7 +14,7 @@ url = 'http://zvbookapisecure-test.avantik.io/TikAe	roWebAPI/BookingService.asmx
 
 describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
-		parseString res.describe(), (err, result) ->
+		parseString client.describe(), (err, result) ->
 			if err
 				res.reply JSON.stringify err, null, 4 
 			res.reply JSON.stringify result, null, 4
