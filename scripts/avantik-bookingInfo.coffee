@@ -3,7 +3,7 @@
 #   test web service.
 #
 # Commands:
-#   hubot avantik describe booking service
+#   hubot avantik service describe
 # Notes:
 #   web service to call avantik web service
 
@@ -13,9 +13,8 @@ soap = require 'soap'
 url = "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
 
 module.exports = (robot) ->
-	robot.respond /describe avantik/i, (res) ->
-		res.reply "Roger!"
-		console.log "Roger"
+	robot.respond /avantik service describe/i, (res) ->
+		describeMethods res
 
 describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
