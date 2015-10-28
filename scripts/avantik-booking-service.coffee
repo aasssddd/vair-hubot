@@ -10,9 +10,10 @@
 soap = require 'soap'
 {parseString} = require 'xml2js'
 
-url = 'http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL'
+url = "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
 
 describeMethods = (res) ->
+	console.log "Roger in describeMethods"
 	soap.createClient url, (err, client) ->
 		if err
 			res.reply "Err! #{JSON.stringify err, null, 4}"
