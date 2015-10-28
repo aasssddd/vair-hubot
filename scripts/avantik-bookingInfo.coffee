@@ -20,11 +20,8 @@ describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
 		if err
 			res.reply "Err! #{JSON.stringify err, null, 4}"
-		console.log client.describe()
-		parseString client.describe(), (err, result) ->
-			if err
-				res.reply "error #{JSON.stringify err, null, 4}" 
-			res.reply JSON.stringify result, null, 4
+		res.reply JSON.stringify client.describe(), null, 4
+			
 
 
 
