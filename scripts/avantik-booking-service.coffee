@@ -19,5 +19,5 @@ describeMethods = (res) ->
 
 
 module.exports = (robot) ->
-	/describe avantik booking service/i, (res) ->
+	robot.respond /describe avantik booking service/i, (res) ->
 		describeMethods res
