@@ -10,7 +10,7 @@
 soap = require 'soap'
 {parseString} = require 'xml2js'
 
-url = 'http://zvbookapisecure-test.avantik.io/TikAe	roWebAPI/BookingService.asmx?WSDL'
+url = 'http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL'
 
 describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
@@ -24,4 +24,6 @@ describeMethods = (res) ->
 
 module.exports = (robot) ->
 	robot.respond /describe avantik booking service/i, (res) ->
+		res.reply "Roger!"
+		console.log "Roger"
 		describeMethods res
