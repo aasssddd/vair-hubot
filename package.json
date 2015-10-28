@@ -21,6 +21,7 @@
     "hubot-slack": "^3.4.1",
     "hubot-trello": "^0.1.1",
     "hubot-trello-organization": "0.0.2",
+    "soap": "^0.10.3",
     "yelp": "^0.2.0"
   },
   "engines": {
