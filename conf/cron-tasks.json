@@ -2,10 +2,5 @@
     {
         "time" : "0 47 18 * MON,TUE,WED,THU,FRI * ",
         "event" : "off-the-work-notice"
-    },
-    {
-    	"time" : "* * * * *",
-    	"event" : "scheduled-task"
-
     }
 ]
