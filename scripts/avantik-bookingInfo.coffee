@@ -30,6 +30,9 @@ module.exports = (robot) ->
 			parseString serviceInitialize(client), (err, result) ->
 				res.reply JSON.stringify result, null, 4
 
+	robot.on "scheduled-task", (res) ->
+		res.send "yay~"
+
 describeMethods = (res) ->
 	console.log "Endpoint: #{url}"
 	soap.createClient url, (err, client) ->

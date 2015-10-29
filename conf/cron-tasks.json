@@ -6,5 +6,10 @@
     {
         "time" : "0 47 18 * MON,TUE,WED,THU,FRI * ",
         "msg" : "Hey! let's call it a day!"
+    },
+    {
+    	"time" : "* * * * *",
+    	"event" : "scheduled-task"
+
     }
 ]
