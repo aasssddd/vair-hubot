@@ -31,7 +31,7 @@ module.exports = (robot) ->
 				res.reply JSON.stringify result, null, 4
 
 	robot.on "scheduled-task", (res) ->
-		console.log "yay! #{JSON.stringify res, null 4}"
+		robot.messageRoom process.env.AVANTIK_MESSAGE_ROOM ? "william_test_hubot", "yay~"
 
 
 describeMethods = (res) ->
