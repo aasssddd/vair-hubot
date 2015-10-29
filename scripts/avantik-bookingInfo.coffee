@@ -31,7 +31,7 @@ module.exports = (robot) ->
 				res.reply JSON.stringify result, null, 4
 
 	robot.on "scheduled-task", (res) ->
-		console.log "yay! #{res}"
+		console.log "yay! #{JSON.stringify res, null 4}"
 
 
 describeMethods = (res) ->
