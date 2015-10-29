@@ -20,7 +20,7 @@ soap = require 'soap'
 url = process.env.AVANTIK_ENDPOINT ? "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
 
 module.exports = (robot) ->
-	robot.respond /describe me avantik service \s*(.*)?$/i, (res) ->
+	robot.respond /describe me avantik service\s*(.*)?$/i, (res) ->
 		describeMethods res
 
 	robot.respond /avantik service initialize/i, (res) ->
