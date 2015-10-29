@@ -37,7 +37,9 @@ describeMethods = (res) ->
 			res.reply "Err! #{JSON.stringify err, null, 4}"
 		else
 			if res.match[1]
-				console.log client.describe()["#{res.match[1]}"]
+				json = parseString client.describe()
+				console.log json.GetActivities
+				console.log json["#{res.match[1]}"]
 				res.reply JSON.stringify client.describe()[res.match[1]], null, 4
 			else 
 				res.reply JSON.stringify client.describe(), null, 4
