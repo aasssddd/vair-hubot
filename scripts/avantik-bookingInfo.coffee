@@ -8,7 +8,8 @@
 #		AVANTIK_AGENCY_CODE - 
 #		AVANTIK_LANGUAGE_CODE
 # Commands:
-#   hubot avantik service describe
+#   hubot describe me avantik service <service name>
+#	hubot avantik service initialize
 # Notes:
 #   web service to call avantik web service
 
@@ -19,7 +20,7 @@ soap = require 'soap'
 url = process.env.AVANTIK_ENDPOINT ? "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
 
 module.exports = (robot) ->
-	robot.respond /avantik service describe/i, (res) ->
+	robot.respond /describe me avantik service \s*(.*)?$/i, (res) ->
 		describeMethods res
 
 	robot.respond /avantik service initialize/i, (res) ->
@@ -34,7 +35,11 @@ describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
 		if err
 			res.reply "Err! #{JSON.stringify err, null, 4}"
-		res.reply JSON.stringify client.describe(), null, 4
+		else
+			if res.match[1]
+				res.reply JSON.stringify client.describe()[res.match[1]], null, 4
+			else 
+				res.reply JSON.stringify client.describe(), null, 4
 			
 
 # initialize service
@@ -53,3 +58,4 @@ serviceInitialize = (client) ->
 			err
 		console.log result
 		result
+
