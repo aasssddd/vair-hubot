@@ -37,8 +37,8 @@ describeMethods = (res) ->
 			res.reply "Err! #{JSON.stringify err, null, 4}"
 		else
 			if res.match[1]
-				console.log client.describe().BookingService.GetActivities
-				res.reply JSON.stringify client.describe().BookingService[res.match[1]], null, 4
+				console.log client.describe().BookingService.BookingServiceSoap.GetActivities
+				res.reply JSON.stringify client.describe().BookingService.BookingServiceSoap[res.match[1]], null, 4
 			else 
 				res.reply JSON.stringify client.describe(), null, 4
 			
