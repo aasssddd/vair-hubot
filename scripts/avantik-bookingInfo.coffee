@@ -30,7 +30,7 @@ module.exports = (robot) ->
 				res.reply JSON.stringify result, null, 4
 
 describeMethods = (res) ->
-	console.debug "Endpoint: #{url}"
+	console.log "Endpoint: #{url}"
 	soap.createClient url, (err, client) ->
 		if err
 			res.reply "Err! #{JSON.stringify err, null, 4}"
@@ -39,10 +39,10 @@ describeMethods = (res) ->
 
 # initialize service
 serviceInitialize = (client) ->
-	console.debug "Endpoint: #{url}"
-	console.debug "Agency: #{process.env.AVANTIK_AGENCY_CODE}"
-	console.debug "User Account: #{process.env.AVANTIK_USER_ACCOUNT}"
-	console.debug "User Password: #{process.env.AVANTIK_AGENCY_CODE}"
+	console.log "Endpoint: #{url}"
+	console.log "Agency: #{process.env.AVANTIK_AGENCY_CODE}"
+	console.log "User Account: #{process.env.AVANTIK_USER_ACCOUNT}"
+	console.log "User Password: #{process.env.AVANTIK_AGENCY_CODE}"
 	args = 
 		strAgencyCode:	process.env.AVANTIK_AGENCY_CODE ? "default"
 		strUserName:	process.env.AVANTIK_USER_ACCOUNT ? "default"
