@@ -23,8 +23,9 @@ module.exports = (robot) ->
 		describeMethods res
 
 	robot.respond /avantik service initialize/i, (res) ->
-		parseString res, (err, result) ->
-			res.reply JSON.stringify result, null, 4
+		soap.createClient url, (err, client) ->
+			parseString serviceInitialize(client), (err, result) ->
+				res.reply JSON.stringify result, null, 4
 
 describeMethods = (res) ->
 	soap.createClient url, (err, client) ->
@@ -41,5 +42,7 @@ serviceInitialize = (client) ->
 		strPassword:	process.env.AVANTIK_USER_PASSWORD
 		strLanguageCode:	process.env.AVANTIK_LANGUAGE_CODE
 	client.ServiceInitialize args, (err, result) ->
+		if err
+			err
 		console.log result
 		result
