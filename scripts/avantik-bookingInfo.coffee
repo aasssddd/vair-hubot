@@ -30,6 +30,21 @@ module.exports = (robot) ->
 			parseString serviceInitialize(client), (err, result) ->
 				res.reply JSON.stringify result, null, 4
 
+	robot.respond /avantik get passenger manifest of flight\s*(.*)? on date\s*(.*)$/i, (res) ->
+		client = soap.createClient url, (err, client) ->
+			if err ? 
+				res.reply "err! #{JSON.stringify err, null, 4}"
+			else
+				auth = serviceInitialize client
+				console.log auth
+				args = 
+					airline_rcd : "zv"
+					flight_number : res.match[1]
+					departure_date_from : res.match[2]
+				output = getPassengerManifest args, client
+				console.log output
+				res.reply output
+
 
 describeMethods = (res) ->
 	console.log "Endpoint: #{url}"
@@ -58,6 +73,15 @@ serviceInitialize = (client) ->
 	client.ServiceInitialize args, (err, result) ->
 		if err
 			err
-		console.log result
+		result
+
+getPassengerManifest = (args, client) ->
+	args = 
+		airline_rcd : args.airline_rcd ? "zv"
+		flight_number : args.flight_number
+		departure_date_from : args.departure_date_from
+	client.GetPassengerManifest args, (err, result) ->
+		if err?
+			err
 		result
 
