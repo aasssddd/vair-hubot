@@ -36,14 +36,14 @@ module.exports = (robot) ->
 				res.reply "err! #{JSON.stringify err, null, 4}"
 			else
 				auth = serviceInitialize client
-				console.log auth
+				console.log JSON.stringify auth
 				args = 
 					airline_rcd : "zv"
 					flight_number : res.match[1]
 					departure_date_from : res.match[2]
 				output = getPassengerManifest args, client
-				console.log output
-				res.reply output
+				console.log JSON.stringify output
+				res.reply JSON.stringify output
 
 
 describeMethods = (res) ->
