@@ -35,13 +35,13 @@ module.exports = (robot) ->
 				res.reply "err! #{JSON.stringify err, null, 4}"
 			else
 				auth = serviceInitialize client
-				console.log JSON.stringify auth
+				if !auth
+					res.reply "err!!!!"
 				args = 
 					airline_rcd : "zv"
 					flight_number : res.match[1]
 					departure_date_from : res.match[2]
 				output = getPassengerManifest args, client
-				console.log JSON.stringify output
 				res.reply JSON.stringify output
 
 
@@ -74,10 +74,12 @@ serviceInitialize = (client) ->
 			err
 		parseResult = parseString result.ServiceInitializeResult, (err, parseResult) ->
 			console.log parseResult
-			parseResult
-		parseResult
+			if parseResult.error.code != '000'
+				console.log parseResult.message
+				false
+			true
 
-getPassengerManifest = (args, client) ->
+getPassengerManifest = (args, client, res) ->
 	args = 
 		airline_rcd : args.airline_rcd ? "zv"
 		flight_number : args.flight_number
@@ -85,5 +87,6 @@ getPassengerManifest = (args, client) ->
 	client.GetPassengerManifest args, (err, result) ->
 		if err?
 			err
-		result
+		console.log result
+		res.reply result
 
