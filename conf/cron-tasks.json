@@ -2,5 +2,9 @@
     {
         "time" : "0 47 18 * MON,TUE,WED,THU,FRI * ",
         "event" : "off-the-work-notice"
+    },
+    {
+        "time" : "0 30 12 * MON,TUE,WED,THU,FRI * ",
+        "event" : "lunch-time"
     }
 ]
