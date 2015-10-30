@@ -27,7 +27,9 @@ module.exports = (robot) ->
 		soap.createClient url, (err, client) ->
 			if err
 				console.log "Err! #{err}"
-			if serviceInitialize(client)
+			result = serviceInitialize client
+			console.log result
+			if result === true
 				res.reply "Success"
 			res.reply "Fail"
 
