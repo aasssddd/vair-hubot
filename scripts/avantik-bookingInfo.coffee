@@ -72,8 +72,9 @@ serviceInitialize = (client) ->
 	client.ServiceInitialize args, (err, result) ->
 		if err?
 			err
-		console.log parseString result.ServiceInitializeResult, (err, parseResult) ->
-			parseResut
+		parseString result.ServiceInitializeResult, (err, parseResult) ->
+			console.log parseResult
+			parseResult
 
 getPassengerManifest = (args, client) ->
 	args = 
