@@ -28,6 +28,7 @@ module.exports = (robot) ->
 			if err
 				console.log "Err! #{err}"
 			parseString serviceInitialize(client), (err, result) ->
+				console.log result
 				res.reply JSON.stringify result, null, 4
 
 	robot.respond /avantik get passenger manifest of flight\s*(.*)? on date\s*(.*)$/i, (res) ->
