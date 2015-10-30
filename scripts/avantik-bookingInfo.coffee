@@ -29,7 +29,7 @@ module.exports = (robot) ->
 				console.log "Err! #{err}"
 			result = serviceInitialize client
 			console.log result
-			if result === true
+			if result
 				res.reply "Success"
 			res.reply "Fail"
 
