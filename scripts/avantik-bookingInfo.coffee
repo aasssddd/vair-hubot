@@ -32,7 +32,7 @@ module.exports = (robot) ->
 
 	robot.respond /avantik get passenger manifest of flight\s*(.*)? on date\s*(.*)$/i, (res) ->
 		soap.createClient url, (err, client) ->
-			if err ? 
+			if err? 
 				res.reply "err! #{JSON.stringify err, null, 4}"
 			else
 				auth = serviceInitialize client
