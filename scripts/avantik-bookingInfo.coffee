@@ -27,7 +27,9 @@ module.exports = (robot) ->
 		soap.createClient url, (err, client) ->
 			if err
 				console.log "Err! #{err}"
-			res.reply serviceInitialize(client)
+			if serviceInitialize(client)
+				res.reply "Success"
+			res.reply "Fail"
 
 	robot.respond /avantik get passenger manifest of flight\s*(.*)? on date\s*(.*)$/i, (res) ->
 		soap.createClient url, (err, client) ->
