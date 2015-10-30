@@ -31,7 +31,7 @@ module.exports = (robot) ->
 				res.reply JSON.stringify result, null, 4
 
 	robot.respond /avantik get passenger manifest of flight\s*(.*)? on date\s*(.*)$/i, (res) ->
-		client = soap.createClient url, (err, client) ->
+		soap.createClient url, (err, client) ->
 			if err ? 
 				res.reply "err! #{JSON.stringify err, null, 4}"
 			else
