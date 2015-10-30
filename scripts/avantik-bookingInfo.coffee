@@ -70,8 +70,9 @@ serviceInitialize = (client) ->
 		strPassword:	process.env.AVANTIK_USER_PASSWORD ? "default"
 		strLanguageCode:	process.env.AVANTIK_LANGUAGE_CODE ? "ZH"
 	client.ServiceInitialize args, (err, result) ->
-		if err
+		if err?
 			err
+		console.log result
 		result
 
 getPassengerManifest = (args, client) ->
