@@ -1,12 +1,6 @@
 # avantik-booking-service.coffee
 # Description:
 #   avantik 
-#	need config 
-#		AVANTIK_ENDOPINT - 
-#		AVANTIK_USER_ACCOUNT - 
-#		AVANTIK_USER_PASSWORD - 
-#		AVANTIK_AGENCY_CODE - 
-#		AVANTIK_LANGUAGE_CODE
 # Commands:
 #   hubot describe me avantik service <service name>
 #	hubot avantik service initialize
@@ -15,6 +9,7 @@
 
 soap = require 'soap'
 {parseString} = require 'xml2js'
+{AvantikInitBean} = require './avantik-bean'
 
 
 url = process.env.AVANTIK_ENDPOINT ? "http://vairtest.tikaero.com/tikAeroWebAPI/BookingService.asmx?WSDL"
@@ -34,7 +29,7 @@ module.exports = (robot) ->
 			if err? 
 				res.reply "err! #{JSON.stringify err, null, 4}"
 			else
-				auth = serviceInitialize client
+				auth = serviceInitialize new ServiceInitializeReq(), client
 				if !auth
 					res.reply "err!!!!"
 				args = 
@@ -42,7 +37,9 @@ module.exports = (robot) ->
 					flight_number : res.match[1]
 					departure_date_from : res.match[2]
 				output = getPassengerManifest args, client
-				res.reply JSON.stringify output
+				return {
+					output 
+				}
 
 
 describeMethods = (res) ->
@@ -59,25 +56,23 @@ describeMethods = (res) ->
 			
 
 # initialize service
-serviceInitialize = (client) ->
-	console.log "Endpoint: #{url}"
-	console.log "Agency: #{process.env.AVANTIK_AGENCY_CODE}"
-	console.log "User Account: #{process.env.AVANTIK_USER_ACCOUNT}"
-	console.log "User Password: #{process.env.AVANTIK_AGENCY_CODE}"
+serviceInitialize = (arg, client, res) ->
+	req = new AvantikInitBean()
 	args = 
-		strAgencyCode:	process.env.AVANTIK_AGENCY_CODE ? "default"
-		strUserName:	process.env.AVANTIK_USER_ACCOUNT ? "default"
-		strPassword:	process.env.AVANTIK_USER_PASSWORD ? "default"
-		strLanguageCode:	process.env.AVANTIK_LANGUAGE_CODE ? "ZH"
+		strAgencyCode:	req.url
+		strUserName:	req.account
+		strPassword:	req.password
+		strLanguageCode:	req.language
+	res.send "Req: #{JSON.stringify args}"
 	client.ServiceInitialize args, (err, result) ->
 		if err?
-			err
+			return { err }
 		parseResult = parseString result.ServiceInitializeResult, (err, parseResult) ->
 			console.log parseResult
 			if parseResult.error.code != '000'
 				console.log parseResult.message
-				false
-			true
+				return false
+			return true
 
 getPassengerManifest = (args, client, res) ->
 	args = 
