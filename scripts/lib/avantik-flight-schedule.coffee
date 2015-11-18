@@ -35,6 +35,8 @@ getFlightSchedule = (data, callback) ->
 		if err?
 			errMsg = "service connect #{err}"
 		else
+			log.debug "request: \n#{client.lastRequest}"
+			log.debug "response: \n#{client.lastResponse}"
 			flight_data = []
 			for f in flights
 				options = 
