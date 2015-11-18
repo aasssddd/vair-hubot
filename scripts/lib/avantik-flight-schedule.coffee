@@ -62,7 +62,7 @@ getFlightSchedule = (data, callback) ->
 								flight_data.push data
 					count--
 
-			deasync.whileLoop () ->
+			deasync.loopWhile () ->
 				log.debug "processing #{count/flights.length * 100}%"
 				count > 0
 

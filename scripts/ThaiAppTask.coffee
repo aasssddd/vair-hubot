@@ -168,7 +168,7 @@ module.exports = (robot) ->
 								csvGenerator.add new SitaAirCarrierRecord "P", d.nationality_rcd, d.passport_number, passport_expiry_string, null, d.lastname, d.firstname,	birthday_string, d.gender_type_rcd, d.nationality_rcd, travel_type, null, null
 							processing = false
 
-							deasync.whileLoop () ->
+							deasync.loopWhile () ->
 								robot.logger.debug "wait for data process"
 								return processing
 
