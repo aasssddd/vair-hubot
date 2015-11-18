@@ -6,6 +6,7 @@ dateFormat = require 'dateformat'
 {parseString} = require 'xml2js'
 tosource = require 'tosource'
 deasync = require 'deasync'
+Log = require 'log'
 
 ###
 	data:
@@ -14,6 +15,7 @@ deasync = require 'deasync'
 ###
 
 getFlightSchedule = (data, callback) ->
+	log = new Log "debug"
 	# wait async exec time
 	wait_async_exec = 5000
 	errMsg = ""
@@ -27,7 +29,8 @@ getFlightSchedule = (data, callback) ->
 		flights = config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
 
 	# query schedule
-	console.log "start querying #{tosource flights} at #{data.fdate}"
+	log.debug "start querying #{tosource flights} at #{data.fdate}"
+
 	soap.createClient schedule_api_url, (err, client) ->
 		if err?
 			errMsg = "service connect #{err}"
