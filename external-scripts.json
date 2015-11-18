@@ -11,5 +11,7 @@
   "hubot-shipit",
   "hubot-cron-json",
   "hubot-trello",
-  "hubot-trello-organization"
+  "hubot-trello-organization",
+  "hubot-reload-scripts"
+
 ]

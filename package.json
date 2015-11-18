@@ -21,9 +21,23 @@
     "hubot-slack": "^3.4.1",
     "hubot-trello": "^0.1.1",
     "hubot-trello-organization": "0.0.2",
-    "soap": "^0.10.3",
+    "soap": "^0.11.0",
     "xml2js": "^0.4.13",
-    "yelp": "^0.2.0"
+    "yelp": "^0.2.0",
+    "app-config": "^0.1.4",
+    "aws-sdk": "^2.2.15",
+    "csv-write-stream": "^1.0.0",
+    "dateformat": "^1.0.11",
+    "deasync": "^0.1.4",
+    "fs": "0.0.2",
+    "ftps": "^0.3.2",
+    "hubot-reload-scripts": "^0.1.2",
+    "json2csv": "^3.0.1",
+    "moment": "^2.10.6",
+    "node-schedule": "^0.5.1",
+    "soap-cookie": "^0.10.1",
+    "string": "^3.3.1",
+    "tosource": "^1.0.0"
   },
   "engines": {
     "node": "0.10.x"

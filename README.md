@@ -212,3 +212,11 @@ Add the subdomain hubot should connect to. If you web URL looks like
 
 You may want to get comfortable with `heroku logs` and `heroku restart` if
 you're having issues.
+
+## Avantik
+
+### Environment config
+    NODE_ENV=avantik_33 | avantik_34
+
+### command
+    hubot help avantik
