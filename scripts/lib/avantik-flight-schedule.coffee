@@ -48,19 +48,19 @@ getFlightSchedule = (data, callback) ->
 					dtFlightTo: options.fdate
 					FlightNumber: options.flight
 				
-					client.GetFlightInformationDeparture args, (qryErr, result) ->
-						log.debug "request: \n#{client.lastRequest}"
-						log.debug "response: \n#{client.lastResponse}"
-						# parse result and return
-						if qryErr?
-							errMsg = "Query Error #{qryErr}"
-						else
-							parseString result.GetFlightInformationDepartureResult, (err, data) ->
-								if err?
-									callback err, flight_data
-								else
-									flight_data.push data
-						count--
+				client.GetFlightInformationDeparture args, (qryErr, result) ->
+					log.debug "request: \n#{client.lastRequest}"
+					log.debug "response: \n#{client.lastResponse}"
+					# parse result and return
+					if qryErr?
+						errMsg = "Query Error #{qryErr}"
+					else
+						parseString result.GetFlightInformationDepartureResult, (err, data) ->
+							if err?
+								callback err, flight_data
+							else
+								flight_data.push data
+					count--
 
 			deasync.loopWhile () ->
 				log.debug "#{count} data records need to process"
