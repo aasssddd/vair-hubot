@@ -31,11 +31,13 @@ getFlightSchedule = (data, callback) ->
 	# query schedule
 	log.debug "start querying #{tosource flights} at #{data.fdate}"
 
+	count = flights.length
 	soap.createClient schedule_api_url, (err, client) ->
 		if err?
 			errMsg = "service connect #{err}"
 		else
 			flight_data = []
+
 			for f in flights
 				options = 
 					flight: f
@@ -45,22 +47,22 @@ getFlightSchedule = (data, callback) ->
 					dtFlightFrom: options.fdate
 					dtFlightTo: options.fdate
 					FlightNumber: options.flight
-
-				client.GetFlightInformationDeparture args, (qryErr, result) ->
-					log.debug "request: \n#{client.lastRequest}"
-					log.debug "response: \n#{client.lastResponse}"
-					# parse result and return
-					if qryErr?
-						errMsg = "Query Error #{qryErr}"
-					else
-						parseString result.GetFlightInformationDepartureResult, (err, data) ->
-							if err?
-								callback err, flight_data
-							else
-								flight_data.push data
-
-			deasync.sleep wait_async_exec
-
+				
+					client.GetFlightInformationDeparture args, (qryErr, result) ->
+						log.debug "request: \n#{client.lastRequest}"
+						log.debug "response: \n#{client.lastResponse}"
+						# parse result and return
+						if qryErr?
+							errMsg = "Query Error #{qryErr}"
+						else
+							parseString result.GetFlightInformationDepartureResult, (err, data) ->
+								if err?
+									callback err, flight_data
+								else
+									flight_data.push data
+						count--
+			deasync.loopWhile ()->
+				return count >= 0
 			callback errMsg, flight_data
 
 
