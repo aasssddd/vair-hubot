@@ -25,7 +25,7 @@ deasync = require 'deasync'
 {getPassengerManifest} = require './avantik-customer-info'
 {SitaAirCarrierCSV, SitaAirCarrierRecord} = require './lib/sita-csv-generator'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
-{S3FileAccessHelper} = require './upload-to-s3'
+{S3FileAccessHelper} = require './lib/upload-to-s3'
 
 module.exports = (robot) ->
 
