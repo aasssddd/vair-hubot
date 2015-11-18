@@ -63,8 +63,8 @@ module.exports = (robot) ->
 	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
 		args = 
 			flight: res.match[1]
-			fdate: new Date res.match[2]
-			
+			fdate: moment(res.match[2], "YYYY/MM/DD").toDate()
+
 		robot.logger.debug "starting to resend data of #{JSON.stringify args}"
 
 		getFlightSchedule args, (err, sch_res) ->
