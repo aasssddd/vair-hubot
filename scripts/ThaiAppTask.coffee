@@ -60,15 +60,13 @@ module.exports = (robot) ->
 					schedule.scheduleJob schedule_date.toDate(), (data) ->
 						robot.emit 'sendPassengerInfo', data
 
-	robot.respond /try schedule at\s*(.*)?/i, (res) ->
-		robot.emit 'retriveSchedule', new Date(res.match[1])
-
-
 	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
 		args = 
 			flight: res.match[1]
 			fdate: new Date res.match[2]
 			
+		robot.logger.debug "starting to resend data of #{tosource args}"
+
 		getFlightSchedule args, (err, res) ->
 			if err != ""
 				robot.logger.error "Err #{err}"
@@ -177,6 +175,6 @@ module.exports = (robot) ->
 
 							# send success / fail message to chat room
 							if errMsg != ""
-								robot.messageRoom "Shell", "Oops! transfer passenger information to SITA error: #{errMsg}"
+								robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
 							else
-								robot.messageRoom "Shell", "Passenger information  SITA"
+								robot.reply "Data has sent for you"
