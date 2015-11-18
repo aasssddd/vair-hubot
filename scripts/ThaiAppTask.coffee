@@ -65,15 +65,16 @@ module.exports = (robot) ->
 			flight: res.match[1]
 			fdate: new Date res.match[2]
 			
-		robot.logger.debug "starting to resend data of #{tosource args}"
+		robot.logger.debug "starting to resend data of #{JSON.stringify args}"
 
-		getFlightSchedule args, (err, res) ->
+		getFlightSchedule args, (err, sch_res) ->
 			if err != ""
 				robot.logger.error "Err #{err}"
 				robot.send "Err #{err}"
 			else
 				# set schedule task 
-				for j in res
+				robot.logger.debug "found schedule data: #{JSON.stringify sch_res}"
+				for j in sch_res
 					flightDetail = j.Flights.Details[0]
 					data = 
 						flight_no: flightDetail.flight_number[0]
