@@ -29,14 +29,15 @@ moment = require 'moment'
 module.exports = (robot) ->
 	robot.on 'retriveSchedule', (date_input) ->
 		qry_date = date_input? new Date()
+		args = 
+			fdate: qry_date
 
-		getFlightSchedule date_input, (err, res) ->
+		getFlightSchedule args, (err, res) ->
 			job_trigger_offset_hour = -3
 			if err != ""
 				robot.logger.error "Err #{err}"
 				robot.send "Err #{err}"
 			else
-
 				# set schedule task 
 				for j in res
 					flightDetail = j.Flights.Details[0]
@@ -63,9 +64,26 @@ module.exports = (robot) ->
 		robot.emit 'retriveSchedule', new Date(res.match[1])
 
 
-	robot.respond /test send*\s*(.*)?/i, (res) ->
-		robot.emit 'sendPassengerInfo', res.match[1]
+	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
+		data = 
+			fdate: new Date res.match[1]
+			flight: res.match[2]
+		getFlightSchedule args, (err, res) ->
+			if err != ""
+				robot.logger.error "Err #{err}"
+				robot.send "Err #{err}"
+			else
+				# set schedule task 
+				for j in res
+					flightDetail = j.Flights.Details[0]
+					data = 
+						flight_no: flightDetail.flight_number[0]
+						dep_date: flightDetail.departure_date[0].split(" ")[0]
+						dep_time: string(flightDetail.planned_departure_time[0]).padLeft(4, "0").toString()
+						arr_date: flightDetail.arrival_date[0].split(" ")[0]
+						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
 
+					robot.emit 'sendPassengerInfo', data
 
 	###
 		data:
