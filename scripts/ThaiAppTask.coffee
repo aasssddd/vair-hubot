@@ -107,6 +107,7 @@ module.exports = (robot) ->
 			if err? 
 				errMsg = err
 			else
+				processed = false
 				serviceInitialize client, initBean, (err, initResult) ->
 					if err?
 						errMsg += "#{err}"
@@ -127,6 +128,7 @@ module.exports = (robot) ->
 						args.PassengersManifestRequest.airline_rcd = "ZV"
 						args.PassengersManifestRequest.flight_number = data.flight_no
 						args.PassengersManifestRequest.departure_date_from = moment(data.dep_date, avantik_dateformat_string).format avantik_date_req_string
+						processing = true
 						getPassengerManifest args, client, (passErr, passResult) ->
 							if passErr?
 								errMsg += "err! #{JSON.stringify passErr}"
@@ -164,8 +166,12 @@ module.exports = (robot) ->
 								if d.date_of_birth?
 									birthday_string = dateFormat (new Date d.date_of_birth), sita_date_format_string								
 								csvGenerator.add new SitaAirCarrierRecord "P", d.nationality_rcd, d.passport_number, passport_expiry_string, null, d.lastname, d.firstname,	birthday_string, d.gender_type_rcd, d.nationality_rcd, travel_type, null, null
-							
-							deasync.sleep wait_async_exec
+							processing = false
+
+							deasync.whileLoop () ->
+								robot.logger.debug "wait for data process"
+								return processing
+
 							#generate file name
 							file_name = "#{flight_num}#{dateFormat depDateOri, partial_file_name_format}.csv"
 
