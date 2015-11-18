@@ -35,8 +35,6 @@ getFlightSchedule = (data, callback) ->
 		if err?
 			errMsg = "service connect #{err}"
 		else
-			log.debug "request: \n#{client.lastRequest}"
-			log.debug "response: \n#{client.lastResponse}"
 			flight_data = []
 			for f in flights
 				options = 
@@ -49,6 +47,8 @@ getFlightSchedule = (data, callback) ->
 					FlightNumber: options.flight
 
 				client.GetFlightInformationDeparture args, (qryErr, result) ->
+					log.debug "request: \n#{client.lastRequest}"
+					log.debug "response: \n#{client.lastResponse}"
 					# parse result and return
 					if qryErr?
 						errMsg = "Query Error #{qryErr}"
