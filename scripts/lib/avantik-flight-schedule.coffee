@@ -17,7 +17,7 @@ Log = require 'log'
 getFlightSchedule = (data, callback) ->
 	log = new Log(process.env.HUBOT_LOG_LEVEL? 'info')
 	# wait async exec time
-	wait_async_exec = 60000
+	wait_async_exec = 8000
 	errMsg = ""
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
 	dataFormatString = "yyyymmdd"
@@ -62,7 +62,6 @@ getFlightSchedule = (data, callback) ->
 			deasync.sleep wait_async_exec
 
 			callback errMsg, flight_data
-	
 
 
 module.exports.getFlightSchedule = getFlightSchedule
