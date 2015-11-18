@@ -61,9 +61,10 @@ getFlightSchedule = (data, callback) ->
 								else
 									flight_data.push data
 						count--
-			deasync.loopWhile ()->
+
+			deasync.loopWhile () ->
+				log.debug "#{count} data records need to process"
 				return count >= 0
 			callback errMsg, flight_data
-
 
 module.exports.getFlightSchedule = getFlightSchedule
