@@ -27,6 +27,7 @@ getFlightSchedule = (data, callback) ->
 		flights = config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
 
 	# query schedule
+	console.log "start querying #{tosource flights} at #{data.fdate}"
 	soap.createClient schedule_api_url, (err, client) ->
 		if err?
 			errMsg = "service connect #{err}"
