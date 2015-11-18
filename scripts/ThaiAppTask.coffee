@@ -27,6 +27,7 @@ moment = require 'moment'
 {S3FileAccessHelper} = require './upload-to-s3'
 
 module.exports = (robot) ->
+
 	robot.on 'retriveSchedule', (date_input) ->
 		qry_date = date_input? new Date()
 		args = 
@@ -61,9 +62,10 @@ module.exports = (robot) ->
 						robot.emit 'sendPassengerInfo', data
 
 	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
+		time_offset = parseInt config.avantik.GMT_HOUR
 		args = 
 			flight: res.match[1]
-			fdate: moment(res.match[2], "YYYY/MM/DD").toDate()
+			fdate: moment(res.match[2], "YYYY/MM/DD").add(time_offset, 'hour').toDate()
 
 		robot.logger.debug "starting to resend data of #{JSON.stringify args}"
 

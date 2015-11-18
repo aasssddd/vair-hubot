@@ -5,5 +5,6 @@ module.exports = {
 	AVANTIK_FLIGHT_ENDPOINT: "http://vairtest.tikaero.com/FlightsWebservice/FlightsService.asmx?WSDL",
 	AVANTIK_USER_ACCOUNT: "softmobile",
 	AVANTIK_USER_PASSWORD: "softmobile1234",
-	AVANTIK_QUERY_FLIGHT: "005;006;"
+	AVANTIK_QUERY_FLIGHT: "005;006;",
+	GMT_HOUR = 8
 }
