@@ -7,13 +7,20 @@ dateFormat = require 'dateformat'
 tosource = require 'tosource'
 deasync = require 'deasync'
 
+###
+	data:
+		fdate: date format 
+		flight: flight number
 
-getFlightSchedule = (date, callback) ->
+###
+
+getFlightSchedule = (data, callback) ->
 	wait_async_exec = 5000
 	errMsg = ""
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
 	dataFormatString = "yyyymmdd"
-	flights = config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
+
+	flights = data.flight ? config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
 	# query schedule
 	
 	soap.createClient schedule_api_url, (err, client) ->
@@ -24,7 +31,8 @@ getFlightSchedule = (date, callback) ->
 			for f in flights
 				options = 
 					flight: f
-					fdate: (dateFormat date, dataFormatString)
+
+					fdate: (dateFormat data.date, dataFormatString)
 
 				args = 
 					dtFlightFrom: options.fdate
