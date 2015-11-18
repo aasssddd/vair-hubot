@@ -27,11 +27,11 @@ module.exports = (robot) ->
 						res.reply "Not OK, #{initResult.error.code} #{initResult.error.message}"
 					else
 
-						console.log "request: \n#{client.lastRequest}"
-						console.log "response: \n#{client.lastResponse}"
+						robot.logger.debug "request: \n#{client.lastRequest}"
+						robot.logger.debug "response: \n#{client.lastResponse}"
 						res.reply "Init OK, #{initResult.error.code} #{initResult.error.message}"
 						cookie = new Cookie(client.lastResponseHeaders)
-						console.log "Cookie: \n#{JSON.stringify cookie}"
+						robot.logger.debug "Cookie: \n#{JSON.stringify cookie}"
 						client.setSecurity(cookie)
 						args = new PassengerManifestReq()
 						args.PassengersManifestRequest.airline_rcd = "ZV"
@@ -41,18 +41,17 @@ module.exports = (robot) ->
 							if passErr?
 								res.reply "err! #{JSON.stringify passErr}"
 							else
-								console.log "request header: \n#{JSON.stringify client.lastRequestHeaders}"
-								console.log "request: \n#{client.lastRequest}"
-								console.log "response: \n#{client.lastResponse}"
+								robot.logger.debug "request header: \n#{JSON.stringify client.lastRequestHeaders}"
+								robot.logger.debug "request: \n#{client.lastRequest}"
+								robot.logger.debug "response: \n#{client.lastResponse}"
 							fs.writeFile "avantik.log", JSON.stringify(passResult, null, 4), 'utf8', (werr) ->
 							if werr?
-								console.log "write err"
+								robot.logger.error "write err"
 								res.reply "#{JSON.stringify passResult, null, 4}"
 
 getPassengerManifest = (args, client, callback) ->
 	req = 
 		PassengersManifestRequest: args
-	console.log JSON.stringify req, null, 4
 
 	client.GetPassengerManifest args, (err, result) ->
 		if err?

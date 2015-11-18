@@ -37,7 +37,6 @@ class S3FileAccessHelper
 		.on 'error', (err) ->
 			return callback err
 		.on 'open', () ->
-			console.log "data: \n #{tosource data}"
 			param = 
 				Bucket: option.target_bucket
 				Key: option.target_name
@@ -45,7 +44,6 @@ class S3FileAccessHelper
 			s3obj = new AWS.S3
 			s3obj.putObject param, (err, data) ->
 				if err?
-					console.log "err! #{tosource err}"
 					callback err
 				else
 					callback err, data

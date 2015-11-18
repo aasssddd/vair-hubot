@@ -19,6 +19,7 @@ schedule = require 'node-schedule'
 dateFormat = require 'dateformat'
 {parseString} = require 'xml2js'
 moment = require 'moment'
+deasync = require 'deasync'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
@@ -84,7 +85,7 @@ module.exports = (robot) ->
 						dep_time: string(flightDetail.planned_departure_time[0]).padLeft(4, "0").toString()
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
-
+					robot.logger.info "query passenger information with parameters: \n #{tosource data}"
 					robot.emit 'sendPassengerInfo', data
 
 	###
@@ -100,6 +101,7 @@ module.exports = (robot) ->
 		initBean = new AvantikInitBean
 		avantik_dateformat_string = "YYYYMMDD"
 		avantik_date_req_string = "YYYY/MM/DD"
+		wait_async_exec = 2000
 		errMsg = ""
 		soap.createClient initBean.url, (err, client) ->
 			if err? 
@@ -141,7 +143,7 @@ module.exports = (robot) ->
 
 							# assume all passengers are Normal
 							travel_type = "N"
-							console.log "#{tosource flightInfo}"
+							robot.logger.debug "flight info: #{tosource flightInfo}"
 							depDateOri = moment(data.dep_date, avantik_dateformat_string).toDate()
 							arrDateOri = moment(data.arr_date, avantik_dateformat_string).toDate()
 							depDate = dateFormat depDateOri, sita_date_format_string
@@ -154,6 +156,7 @@ module.exports = (robot) ->
 							# put passenger data
 							passenger = flightInfo.Passenger
 							for d, i in passenger
+								robot.logger.debug "passenger: #{JSON.stringify d}"
 								passport_expiry_string = ""
 								birthday_string = ""
 								if d.passport_expiry_date?
@@ -162,15 +165,23 @@ module.exports = (robot) ->
 									birthday_string = dateFormat (new Date d.date_of_birth), sita_date_format_string								
 								csvGenerator.add new SitaAirCarrierRecord "P", d.nationality_rcd, d.passport_number, passport_expiry_string, null, d.lastname, d.firstname,	birthday_string, d.gender_type_rcd, d.nationality_rcd, travel_type, null, null
 							
+							deasync.sleep wait_async_exec
 							#generate file name
-
 							file_name = "#{flight_num}#{dateFormat depDateOri, partial_file_name_format}.csv"
 
 							# save csv file
 							csvGenerator.commit file_name
 		
+							deasync.sleep wait_async_exec
+
 							# upload to S3
-							S3FileAccessHelper.UploadFile file_name
+							S3FileAccessHelper.UploadFile file_name, (err, data) ->
+								if err?
+									robot.reply "Err: #{err}"
+								else
+									robot.reply "S3_upload Ok!"
+
+							deasync.sleep wait_async_exec
 
 							# TODO: send to SITA
 

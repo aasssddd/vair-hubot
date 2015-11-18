@@ -11,10 +11,10 @@ deasync = require 'deasync'
 	data:
 		fdate: date format 
 		flight: flight number
-
 ###
 
 getFlightSchedule = (data, callback) ->
+	# wait async exec time
 	wait_async_exec = 5000
 	errMsg = ""
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
