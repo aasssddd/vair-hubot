@@ -20,9 +20,13 @@ getFlightSchedule = (data, callback) ->
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
 	dataFormatString = "yyyymmdd"
 
-	flights = data.flight ? config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
+	flights = []
+	if data.flight? 
+		flights.push data.flight 
+	else 
+		flights = config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
+
 	# query schedule
-	
 	soap.createClient schedule_api_url, (err, client) ->
 		if err?
 			errMsg = "service connect #{err}"
@@ -31,7 +35,6 @@ getFlightSchedule = (data, callback) ->
 			for f in flights
 				options = 
 					flight: f
-
 					fdate: (dateFormat data.date, dataFormatString)
 
 				args = 
