@@ -188,7 +188,8 @@ module.exports = (robot) ->
 							# TODO: remove local file
 
 							# send success / fail message to chat room
-							if errMsg != ""
-								robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
-							else
-								robot.reply "Data has sent for you"
+		deasync.sleep 10000
+		if errMsg != ""
+			robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
+		else
+			robot.reply "Data has sent for you"
