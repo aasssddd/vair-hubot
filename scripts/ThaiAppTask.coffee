@@ -179,17 +179,14 @@ module.exports = (robot) ->
 								if err?
 									robot.reply "Err: #{err}"
 								else
-									robot.reply "S3_upload Ok!"
+									robot.send "S3_upload Ok!"
 
-							deasync.sleep wait_async_exec
+									# TODO: send to SITA
 
-							# TODO: send to SITA
+									# TODO: remove local file
 
-							# TODO: remove local file
-
-							# send success / fail message to chat room
-		deasync.sleep 10000
-		if errMsg != ""
-			robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
-		else
-			robot.reply "Data has sent for you"
+									# send success / fail message to chat room
+									if errMsg != ""
+										robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
+									else
+										robot.reply "Data has sent for you"
