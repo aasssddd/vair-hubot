@@ -65,9 +65,10 @@ module.exports = (robot) ->
 
 
 	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
-		data = 
+		args = 
 			fdate: new Date res.match[1]
 			flight: res.match[2]
+			
 		getFlightSchedule args, (err, res) ->
 			if err != ""
 				robot.logger.error "Err #{err}"
