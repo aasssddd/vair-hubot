@@ -185,7 +185,7 @@ module.exports = (robot) ->
 												robot.reply "Err: #{err}"
 											else
 												robot.logger.info "file #{file_name} uploaded"
-												robot.send "S3_upload Ok!"
+												robot.reply "S3_upload Ok!"
 
 												# TODO: send to SITA
 
@@ -193,7 +193,7 @@ module.exports = (robot) ->
 
 												# send success / fail message to chat room
 												if errMsg != ""
-													robot.send "Oops! transfer passenger information to SITA error: #{errMsg}"
+													robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
 												else
-													robot.send "Data has sent for you"
+													robot.reply "Data has sent for you"
 									, wait_file_save_exec
