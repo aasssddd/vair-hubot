@@ -29,9 +29,13 @@ async = require 'async'
 
 module.exports = (robot) ->
 
+	###
+		daily job:
+			retrive flight schedule and create scheduled job
+	###
 	robot.on 'retriveSchedule', () ->
 		time_zone_offset = config.avantik.GMT_HOUR
-		qry_date = moment().add(parseInt(time_zone_offset), "hour").toDate()
+		qry_date = moment().format("YYYYMMDD")
 		args = 
 			fdate: qry_date
 
