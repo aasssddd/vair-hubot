@@ -70,7 +70,7 @@ module.exports = (robot) ->
 			flight: res.match[1]
 			fdate: moment(res.match[2], "YYYY/MM/DD").toString "YYYYMMDD"
 
-		robot.logger.debug "starting to resend data of #{JSON.stringify args}"
+		robot.logger.info "starting to resend data of #{JSON.stringify args}"
 
 		getFlightSchedule args, (err, sch_res) ->
 			if err != ""
