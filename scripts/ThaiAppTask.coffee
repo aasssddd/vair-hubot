@@ -67,17 +67,13 @@ module.exports = (robot) ->
 					schedule_date.minute schedule_time[1]
 					schedule_date.add job_trigger_offset_hour, 'hour'
 					robot.logger.info "JOB is scheduled at #{schedule_date.toDate()}"
-					schedule.scheduleJob schedule_date.toDate(), (data) ->
-						robot.emit 'sendPassengerInfo', data
+					schedule.scheduleJob schedule_date.toDate(), (obj) ->
+						robot.emit 'sendPassengerInfo', obj
+					.bind null, data
 
 	robot.respond /test schedule/i, () ->
 		robot.emit 'retriveSchedule'
 
-	robot.on 'test-emit', (data)->
-		robot.logger.info "test #{data}"
-
-	robot.respond /emit/i, ()->
-		robot.emit 'test-emit', "helloworld"
 
 	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
 		time_offset = parseInt config.avantik.GMT_HOUR
