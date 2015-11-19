@@ -42,7 +42,7 @@ getFlightSchedule = (data, callback) ->
 			async.forEachOf flights, (item, key, cb) ->
 				options = 
 					flight: item
-					fdate: data.date
+					fdate: data.fdate
 				log.info "start querying flight schedule of #{tosource options}"
 				args = 
 					dtFlightFrom: options.fdate
