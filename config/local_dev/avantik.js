@@ -7,5 +7,6 @@ module.exports = {
 	AVANTIK_USER_PASSWORD: "softmobile1234",
 	AVANTIK_QUERY_FLIGHT: "005;006",
 	GMT_HOUR: 0,
-	SITA_CSV_FILE_PATH: "./"
+	SITA_CSV_FILE_PATH: "./",
+	AVANTIK_MESSAGE_ROOM: "william_test_hubot"
 }

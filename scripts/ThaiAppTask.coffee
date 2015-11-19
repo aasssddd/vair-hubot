@@ -207,10 +207,14 @@ module.exports = (robot) ->
 												# TODO: send to SITA
 
 												# TODO: remove local file
+												fs.unlink filePath + file_name, (err) ->
+													if err?
+														robot.logger.error "delete file fail!"
+														robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{filePath + file_name} delete fail!"
 
 												# send success / fail message to chat room
 												if errMsg != ""
-													robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
+													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Oops! transfer passenger information to SITA error: #{errMsg}"
 												else
-													robot.reply "Data has sent for you"
+													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Data has sent for you"
 									, wait_file_save_exec
