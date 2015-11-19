@@ -49,8 +49,8 @@ module.exports = (robot) ->
 				robot.send "Err #{err}"
 			else
 				# set schedule task 
-				for j in res
-					flightDetail = j.Flights.Details[0]
+				res.forEach (item) ->
+					flightDetail = item.Flights.Details[0]
 					data = 
 						flight_no: flightDetail.flight_number[0]
 						dep_date: flightDetail.departure_date[0].split(" ")[0]
