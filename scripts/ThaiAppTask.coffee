@@ -153,6 +153,9 @@ module.exports = (robot) ->
 								robot.logger.debug "response: \n#{client.lastResponse}"
 
 							# convert into SITA file format
+							if !passResult.root?
+								return
+
 							flightInfo = passResult.root.Flight[0]
 							
 							sita_date_format_string = "dd-mmm-yyyy"
