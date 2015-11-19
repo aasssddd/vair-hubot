@@ -39,6 +39,8 @@ module.exports = (robot) ->
 		args = 
 			fdate: qry_date
 
+		robot.logger.info "retriveSchedule with params #{qry_date}"
+
 		getFlightSchedule args, (err, res) ->
 			#run job 3 hours earlier before departure
 			job_trigger_offset_hour = -3
@@ -56,7 +58,7 @@ module.exports = (robot) ->
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
 
-					robot.logger.debug "JOB Request data is: #{tosource data}"
+					robot.logger.info "JOB Request data is: #{tosource data}"
 
 					# set sechedule
 					schedule_date = moment data.dep_date.split(" ")[0], "YYYYMMDD"
@@ -64,7 +66,7 @@ module.exports = (robot) ->
 					schedule_date.hour schedule_time[0]
 					schedule_date.minute schedule_time[1]
 					schedule_date.add job_trigger_offset_hour, 'hour'
-					robot.logger.debug "JOB is scheduled at #{schedule_date.toDate()}"
+					robot.logger.info "JOB is scheduled at #{schedule_date.toDate()}"
 					schedule.scheduleJob schedule_date.toDate(), (data) ->
 						robot.emit 'sendPassengerInfo', data
 
