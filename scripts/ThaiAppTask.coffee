@@ -106,6 +106,8 @@ module.exports = (robot) ->
 			arr_time: HHMM
 	###
 	robot.on 'sendPassengerInfo', (data) ->
+
+		robot.logger.info "query passenger info with parameters: #{tosource data}"
 		# init avantik service
 		initBean = new AvantikInitBean
 		avantik_dateformat_string = "YYYYMMDD"
