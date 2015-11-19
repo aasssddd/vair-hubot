@@ -29,12 +29,14 @@ async = require 'async'
 
 module.exports = (robot) ->
 
-	robot.on 'retriveSchedule', (date_input) ->
-		qry_date = date_input? new Date()
+	robot.on 'retriveSchedule', () ->
+		time_zone_offset = config.avantik.GMT_HOUR
+		qry_date = moment().add(parseInt(time_zone_offset), "hour").toDate()
 		args = 
 			fdate: qry_date
 
 		getFlightSchedule args, (err, res) ->
+			#run job 3 hours earlier before departure
 			job_trigger_offset_hour = -3
 			if err != ""
 				robot.logger.error "Err #{err}"
