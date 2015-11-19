@@ -1,9 +1,9 @@
 {
   "name": "pal",
-  "version": "0.0.0",
+  "version": "0.9.4",
   "private": true,
   "author": "William Chen <william.chen@vair.com.tw>",
-  "description": "a robot for general purpose",
+  "description": "a robot for vair general purpose",
   "dependencies": {
     "app-config": "^0.1.4",
     "async": "^1.5.0",
