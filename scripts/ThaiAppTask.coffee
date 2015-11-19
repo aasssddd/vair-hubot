@@ -73,6 +73,12 @@ module.exports = (robot) ->
 	robot.respond /test schedule/i, () ->
 		robot.emit 'retriveSchedule'
 
+	robot.on 'test-emit', (data)->
+		robot.send "test #{data}"
+
+	robot.respond /emit/i, ()->
+		robot.emit 'test-emit', "helloworld"
+
 	robot.respond /resend sita on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
 		time_offset = parseInt config.avantik.GMT_HOUR
 		args = 
