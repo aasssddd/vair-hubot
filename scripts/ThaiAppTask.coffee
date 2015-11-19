@@ -74,7 +74,7 @@ module.exports = (robot) ->
 		robot.emit 'retriveSchedule'
 
 	robot.on 'test-emit', (data)->
-		robot.send "test #{data}"
+		robot.logger.info "test #{data}"
 
 	robot.respond /emit/i, ()->
 		robot.emit 'test-emit', "helloworld"
