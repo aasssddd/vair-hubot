@@ -68,7 +68,7 @@ module.exports = (robot) ->
 		time_offset = parseInt config.avantik.GMT_HOUR
 		args = 
 			flight: res.match[1]
-			fdate: moment(res.match[2], "YYYY/MM/DD").toString("YYYYMMDD")
+			fdate: moment(res.match[2], "YYYY/MM/DD").format("YYYYMMDD")
 
 		robot.logger.info "starting to resend data of #{JSON.stringify args}"
 
