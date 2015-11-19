@@ -33,7 +33,7 @@ class S3FileAccessHelper
 			if not exist
 				callback "file not exist"
 
-		data = fs.createReadStream filePath
+		data = fs.createReadStream(filePath)
 		.on 'error', (err) ->
 			return callback err
 		.on 'open', () ->
