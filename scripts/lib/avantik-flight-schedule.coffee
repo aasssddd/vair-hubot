@@ -25,6 +25,9 @@ getFlightSchedule = (data, callback) ->
 	dataFormatString = "yyyymmdd"
 
 	flights = []
+
+	log.info "input parameter is #{tosource data}"
+
 	if data.flight? 
 		flights.push data.flight 
 	else 
