@@ -1,7 +1,11 @@
 # sita-csv-generator.coffee
 
-csvWriter = require 'csv-write-stream'
+csv = require "fast-csv"
 fs = require 'fs'
+async = require 'async'
+Log = require 'log'
+tosource = require 'tosource'
+config = require 'app-config'
 
 ###
 	record for generate SitaAirCarrierCSV 
@@ -33,7 +37,7 @@ class SitaAirCarrierRecord
 ###
 class SitaAirCarrierCSV
 	data = []
-	filePath = "./"
+	filePath = config.avantik.SITA_CSV_FILE_PATH
 
 	constructor: (flightNum, depPort, depDate, depTime, arrPort, arrDate, arrTime, options) ->
 		opts = options ?
@@ -65,7 +69,36 @@ class SitaAirCarrierCSV
 	add: (record) ->
 		data.push record
 
-	commit: (fileName) ->
+	commit_2: (fileName, callback) ->
+		level = process.env.HUBOT_LOG_LEVEL
+		if not level?
+			level = "info"
+
+		log = new Log(level)
+		
+		data.push new SitaAirCarrierRecord("***END")
+
+		csvStream = csv.createWriteStream {headers: true}
+
+		csvStream.on "finish", () ->
+			log.debug "file saved!"
+			callback()
+
+		writableStream = fs.createWriteStream filePath + fileName
+		csvStream.pipe writableStream
+
+		data.forEach (item) ->
+			csvStream.write item
+		csvStream.end()
+			
+		
+	commit: (fileName, callback) ->
+		level = process.env.HUBOT_LOG_LEVEL
+		if not level?
+			level = "info"
+
+		log = new Log(level)
+
 		data.push new SitaAirCarrierRecord("***END")
 
 		file = []
@@ -76,9 +109,19 @@ class SitaAirCarrierCSV
 			"IssuingState", "FamilyName", "GivenName", "DateofBirth", "Sex", "CountryofBirth", "TravelType", 
 			"Override", "Response"]})
 		writer.pipe(fs.createWriteStream filePath + fileName)
-		file.forEach (obj) ->
-			writer.write obj
-		writer.end
+
+		writer.on 'close', ()->
+			log.debug "file saved!"
+			callback()
+
+		writer.on 'end', ()->
+			log.debug "file write end"
+
+		file.forEach (item)->
+			writer.write item, () ->
+				log.debug "record: #{JSON.stringify item} is written"
+		writer.end()
+			
 
 module.exports.SitaAirCarrierRecord = SitaAirCarrierRecord
 module.exports.SitaAirCarrierCSV = SitaAirCarrierCSV

@@ -5,8 +5,8 @@ soap = require 'soap'
 dateFormat = require 'dateformat'
 {parseString} = require 'xml2js'
 tosource = require 'tosource'
-deasync = require 'deasync'
 Log = require 'log'
+async = require 'async'
 
 ###
 	data:
@@ -15,9 +15,11 @@ Log = require 'log'
 ###
 
 getFlightSchedule = (data, callback) ->
-	log = new Log(process.env.HUBOT_LOG_LEVEL? 'info')
-	# wait async exec time
-	wait_async_exec = 5000
+	level = process.env.HUBOT_LOG_LEVEL
+	if not level?
+		level = "info"
+
+	log = new Log(level)
 	errMsg = ""
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
 	dataFormatString = "yyyymmdd"
@@ -29,20 +31,16 @@ getFlightSchedule = (data, callback) ->
 		flights = config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
 
 	# query schedule
-	log.debug "start querying #{tosource flights} at #{data.fdate}"
-
-	count = flights.length
 	soap.createClient schedule_api_url, (err, client) ->
 		if err?
 			errMsg = "service connect #{err}"
 		else
 			flight_data = []
-
-			for f in flights
+			async.forEachOf flights, (item, key, cb) ->
+				log.info "start querying #{tosource item} at #{data.fdate}"
 				options = 
-					flight: f
+					flight: item
 					fdate: (dateFormat data.date, dataFormatString)
-
 				args = 
 					dtFlightFrom: options.fdate
 					dtFlightTo: options.fdate
@@ -60,12 +58,13 @@ getFlightSchedule = (data, callback) ->
 								callback err, flight_data
 							else
 								flight_data.push data
-					count--
+								log.info "one data record proceed"
+								cb()
+				
+			,() ->
+				log.info "data collected #{JSON.stringify flight_data}"
+				callback errMsg, flight_data
 
-			deasync.loopWhile () ->
-				log.debug "processing #{count/flights.length * 100}%"
-				count > 0
 
-			callback errMsg, flight_data
 
 module.exports.getFlightSchedule = getFlightSchedule

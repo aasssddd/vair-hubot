@@ -19,7 +19,7 @@ schedule = require 'node-schedule'
 dateFormat = require 'dateformat'
 {parseString} = require 'xml2js'
 moment = require 'moment'
-deasync = require 'deasync'
+async = require 'async'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
@@ -101,8 +101,9 @@ module.exports = (robot) ->
 		initBean = new AvantikInitBean
 		avantik_dateformat_string = "YYYYMMDD"
 		avantik_date_req_string = "YYYY/MM/DD"
-		wait_async_exec = 2000
+		wait_file_save_exec = 2000
 		errMsg = ""
+
 		soap.createClient initBean.url, (err, client) ->
 			if err? 
 				errMsg = err
@@ -128,7 +129,7 @@ module.exports = (robot) ->
 						args.PassengersManifestRequest.airline_rcd = "ZV"
 						args.PassengersManifestRequest.flight_number = data.flight_no
 						args.PassengersManifestRequest.departure_date_from = moment(data.dep_date, avantik_dateformat_string).format avantik_date_req_string
-						processing = true
+
 						getPassengerManifest args, client, (passErr, passResult) ->
 							if passErr?
 								errMsg += "err! #{JSON.stringify passErr}"
@@ -157,42 +158,42 @@ module.exports = (robot) ->
 
 							# put passenger data
 							passenger = flightInfo.Passenger
-							for d, i in passenger
-								robot.logger.debug "passenger: #{JSON.stringify d}"
+							
+							async.forEachOf passenger, (item, key, cb) ->
+								robot.logger.debug "passenger: #{JSON.stringify item}"
 								passport_expiry_string = ""
 								birthday_string = ""
-								if d.passport_expiry_date?
-									passport_expiry_string = dateFormat (new Date d.passport_expiry_date), sita_date_format_string
-								if d.date_of_birth?
-									birthday_string = dateFormat (new Date d.date_of_birth), sita_date_format_string								
-								csvGenerator.add new SitaAirCarrierRecord "P", d.nationality_rcd, d.passport_number, passport_expiry_string, null, d.lastname, d.firstname,	birthday_string, d.gender_type_rcd, d.nationality_rcd, travel_type, null, null
-							processing = false
+								if item.passport_expiry_date?
+									passport_expiry_string = dateFormat (new Date item.passport_expiry_date), sita_date_format_string
+								if item.date_of_birth?
+									birthday_string = dateFormat (new Date item.date_of_birth), sita_date_format_string								
+								csvGenerator.add new SitaAirCarrierRecord "P", item.nationality_rcd, item.passport_number, passport_expiry_string, null, item.lastname, item.firstname,	birthday_string, item.gender_type_rcd, item.nationality_rcd, travel_type, null, null
+								cb()
+							, () ->
+								#generate file name
+								file_name = "#{flight_num}#{dateFormat depDateOri, partial_file_name_format}.csv"
 
-							deasync.loopWhile () ->
-								robot.logger.debug "wait for data process"
-								return processing
+								# save csv file
+								robot.logger.info "starting generate target files"
+								csvGenerator.commit_2 file_name, () ->
+									setTimeout ()->
+										# upload to S3	
+										robot.logger.info "starting upload file to s3"
+										filePath = config.avantik.SITA_CSV_FILE_PATH
+										S3FileAccessHelper.UploadFile filePath + file_name, (err, data) ->
+											if err?
+												robot.reply "Err: #{err}"
+											else
+												robot.logger.info "file #{file_name} uploaded"
+												robot.send "S3_upload Ok!"
 
-							#generate file name
-							file_name = "#{flight_num}#{dateFormat depDateOri, partial_file_name_format}.csv"
+												# TODO: send to SITA
 
-							# save csv file
-							csvGenerator.commit file_name
-		
-							deasync.sleep wait_async_exec
+												# TODO: remove local file
 
-							# upload to S3
-							S3FileAccessHelper.UploadFile file_name, (err, data) ->
-								if err?
-									robot.reply "Err: #{err}"
-								else
-									robot.send "S3_upload Ok!"
-
-									# TODO: send to SITA
-
-									# TODO: remove local file
-
-									# send success / fail message to chat room
-									if errMsg != ""
-										robot.reply "Oops! transfer passenger information to SITA error: #{errMsg}"
-									else
-										robot.reply "Data has sent for you"
+												# send success / fail message to chat room
+												if errMsg != ""
+													robot.send "Oops! transfer passenger information to SITA error: #{errMsg}"
+												else
+													robot.send "Data has sent for you"
+									, wait_file_save_exec
