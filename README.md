@@ -216,7 +216,7 @@ you're having issues.
 ## Avantik
 
 ### Environment config
-    NODE_ENV=avantik_33 | avantik_34
+    NODE_ENV=local|uat|prod
 
 ### command
     hubot help avantik

@@ -5,7 +5,7 @@ module.exports = {
 	AVANTIK_FLIGHT_ENDPOINT: "http://zvbookapisecure-test.avantik.io/FlightsWebservice/FlightsService.asmx?WSDL",
 	AVANTIK_USER_ACCOUNT: "softmobile",
 	AVANTIK_USER_PASSWORD: "softmobile1234",
-	AVANTIK_QUERY_FLIGHT: "005;006",
+	AVANTIK_QUERY_FLIGHT: "005;006;007;008;009;010",
 	GMT_HOUR: 0,
 	SITA_CSV_FILE_PATH: "./",
 	AVANTIK_MESSAGE_ROOM: "william_test_hubot"
