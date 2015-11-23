@@ -206,7 +206,7 @@ module.exports = (robot) ->
 
 												# TODO: send to SITA
 
-												# TODO: remove local file
+												# remove local file
 												fs.unlink filePath + file_name, (err) ->
 													if err?
 														robot.logger.error "delete file fail!"

@@ -80,16 +80,27 @@ class SitaAirCarrierCSV
 
 		csvStream = csv.createWriteStream {headers: true}
 
-		csvStream.on "finish", () ->
-			log.debug "file saved!"
-			callback()
+		fs.stat filePath + fileName, (err, stat) ->
+			if !err?
+				fs.unlinkSync filePath + fileName
 
-		writableStream = fs.createWriteStream filePath + fileName
-		csvStream.pipe writableStream
+			writableStream = fs.createWriteStream filePath + fileName
+			csvStream.pipe writableStream
 
-		data.forEach (item) ->
-			csvStream.write item
-		csvStream.end()
+			# writableStream.on "close", ()->
+			# 	log.info "file saved"
+			# 	callback()
+			csvStream.on "end", ()->
+				log.info "file saved"
+				data = []
+				callback()
+
+			data.forEach (item) ->
+				log.info "file written"
+				csvStream.write item
+
+			writableStream.end()
+			csvStream.end()
 			
 		
 	commit: (fileName, callback) ->
