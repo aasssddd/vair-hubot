@@ -216,5 +216,5 @@ module.exports = (robot) ->
 												if errMsg != ""
 													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Oops! transfer passenger information to SITA error: #{errMsg}"
 												else
-													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passengers manifest on flight ZV#{flight_num} (departure at #{depDateOri} #{depTime}) has sent to SITA"
+													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passengers manifest on flight #{flight_num} (departure at #{depDate} #{depTime}) has sent to SITA"
 									, wait_file_save_exec
