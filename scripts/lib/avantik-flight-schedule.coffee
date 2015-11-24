@@ -26,7 +26,7 @@ getFlightSchedule = (data, callback) ->
 
 	flights = []
 
-	log.info "input parameter is #{tosource data}"
+	log.debug "input parameter is #{tosource data}"
 
 	if data.flight? 
 		flights.push data.flight 
@@ -43,7 +43,8 @@ getFlightSchedule = (data, callback) ->
 				options = 
 					flight: item
 					fdate: data.fdate
-				log.info "start querying flight schedule of #{tosource options}"
+				log.info "start querying flight schedule"
+				log.debug "of #{tosource options}"
 				args = 
 					dtFlightFrom: options.fdate
 					dtFlightTo: options.fdate
@@ -61,11 +62,12 @@ getFlightSchedule = (data, callback) ->
 								callback err, flight_data
 							else
 								flight_data.push data
-								log.info "one data record proceed"
+								log.debug "data record proceed\n#{tosource flight_data}"
 								cb()
 				
 			,() ->
-				log.info "data collected #{JSON.stringify flight_data}"
+				log.info "flight schedule data collected"
+				log.debug "#{JSON.stringify flight_data}"
 				callback errMsg, flight_data
 
 
