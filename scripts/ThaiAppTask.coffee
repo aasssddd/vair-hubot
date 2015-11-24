@@ -143,7 +143,7 @@ module.exports = (robot) ->
 						args.PassengersManifestRequest.airline_rcd = "ZV"
 						args.PassengersManifestRequest.flight_number = data.flight_no
 						args.PassengersManifestRequest.departure_date_from = moment(data.dep_date, avantik_dateformat_string).format avantik_date_req_string
-						args.PassengersManifestRequest.bCheckedIn = true
+						# args.PassengersManifestRequest.bCheckedIn = true
 
 						getPassengerManifest args, client, (passErr, passResult) ->
 							if passErr?
