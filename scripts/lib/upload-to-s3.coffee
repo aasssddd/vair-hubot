@@ -57,7 +57,6 @@ class S3FileAccessHelper
 					log.error "data upload fail with message #{err}"
 					callback err
 				else
-					log.info "file #{option.target_name} uploaded"
 					callback err, data
 
 

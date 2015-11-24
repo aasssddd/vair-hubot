@@ -26,6 +26,7 @@ async = require 'async'
 {SitaAirCarrierCSV, SitaAirCarrierRecord} = require './lib/sita-csv-generator'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
 {S3FileAccessHelper} = require './lib/upload-to-s3'
+{postFileToSlack} = require './lib/slack-file-poster'
 
 module.exports = (robot) ->
 
@@ -193,29 +194,37 @@ module.exports = (robot) ->
 
 								# save csv file
 								robot.logger.info "starting generate target files"
+								filePath = config.avantik.SITA_CSV_FILE_PATH
 								csvGenerator.commit_2 file_name, () ->
 									setTimeout ()->
-										# upload to S3	
-										robot.logger.info "starting upload file to s3"
-										filePath = config.avantik.SITA_CSV_FILE_PATH
-										S3FileAccessHelper.UploadFile filePath + file_name, (err, data) ->
+										# POST file to Slack Channel
+										postFileToSlack filePath + file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, resp) ->
 											if err?
-												robot.reply "Err: #{err}"
+												robot.logger.error "send file to message channel fail: #{err}"
 											else
-												robot.logger.info "file #{file_name} uploaded"
-												robot.reply "S3_upload Ok!"
+												robot.logger.debug "send file result #{tosource resp}"
 
-												# TODO: send to SITA
-
-												# remove local file
-												fs.unlink filePath + file_name, (err) ->
-													if err?
-														robot.logger.error "delete file fail!"
-														robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{filePath + file_name} delete fail!"
-
-												# send success / fail message to chat room
-												if errMsg != ""
-													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Oops! transfer passenger information to SITA error: #{errMsg}"
+											# upload to S3	
+											robot.logger.info "starting upload file to s3"
+											
+											S3FileAccessHelper.UploadFile filePath + file_name, (err, data) ->
+												if err?
+													robot.reply "Err: #{err}"
 												else
-													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passengers manifest on flight #{flight_num} (departure at #{depDate} #{depTime}) has sent to SITA"
+													robot.logger.info "file #{file_name} uploaded"
+													robot.reply "S3_upload Ok!"
+
+													# TODO: send to SITA
+
+													# remove local file
+													fs.unlink filePath + file_name, (err) ->
+														if err?
+															robot.logger.error "delete file fail!"
+															robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{filePath + file_name} delete fail!"
+
+													# send success / fail message to chat room
+													if errMsg != ""
+														robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Oops! transfer passenger information to SITA error: #{errMsg}"
+													else
+														robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passengers manifest on flight #{flight_num} (departure at #{depDate} #{depTime}) has sent to SITA"
 									, wait_file_save_exec
