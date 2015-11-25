@@ -90,8 +90,8 @@ module.exports = (robot) ->
 			else
 				# set schedule task 
 				robot.logger.debug "found schedule data: #{JSON.stringify sch_res}"
-				for j in sch_res
-					flightDetail = j.Flights.Details[0]
+				sch_res.forEach (item) ->
+					flightDetail = item.Flights.Details[0]
 					data = 
 						flight_no: flightDetail.flight_number[0]
 						dep_date: flightDetail.departure_date[0].split(" ")[0]
@@ -156,9 +156,16 @@ module.exports = (robot) ->
 
 							# convert into SITA file format
 							if !passResult.root?
+								robot.logger.info "no data result message is: #{tosource passResult}"
+								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no flight found"
 								return
 
 							flightInfo = passResult.root.Flight[0]
+
+							if !flightInfo
+								robot.logger.info "no data result message is: #{tosource passResult}"
+								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no flight found"
+								return
 							
 							sita_date_format_string = "dd-mmm-yyyy"
 							partial_file_name_format = "yyyymmdd"
