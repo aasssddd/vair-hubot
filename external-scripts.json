@@ -11,6 +11,6 @@
   "hubot-cron-json",
   "hubot-trello",
   "hubot-trello-organization",
-  "hubot-reload-scripts"
-
+  "hubot-reload-scripts",
+  "hubot-yelp"
 ]

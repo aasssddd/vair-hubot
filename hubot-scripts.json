@@ -7,6 +7,5 @@
 	"deadline.coffee",
 	"reload.coffee",
 	"roll.coffee",
-	"yelp.coffee",
 	"weather.coffee"
 ]

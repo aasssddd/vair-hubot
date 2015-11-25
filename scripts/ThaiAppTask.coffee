@@ -3,6 +3,7 @@
 #   Send Passengers Manifest to SITA FTP Server
 # Commands:
 #	hubot resend sita batch - manual trigger send action, if something get wrong
+#	hubot resend sita on flight xxx at yyyy/mm/dd
 # Notes:
 #   web service to call avantik web service
 

@@ -31,6 +31,7 @@
     "hubot-slack": "^3.4.1",
     "hubot-trello": "^0.1.1",
     "hubot-trello-organization": "0.0.2",
+    "hubot-yelp": "^0.1.1",
     "json2csv": "^3.0.1",
     "log": "^1.4.0",
     "moment": "^2.10.6",
