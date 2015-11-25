@@ -157,7 +157,7 @@ module.exports = (robot) ->
 							# convert into SITA file format
 							if !passResult.root?
 								robot.logger.info "no data result message is: #{tosource passResult}"
-								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no flight found"
+								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no passenger data found on flight #{data.flight_no} at #{data.dep_date}"
 								return
 
 							flightInfo = passResult.root.Flight[0]

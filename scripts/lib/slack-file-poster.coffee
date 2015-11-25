@@ -10,7 +10,7 @@ fs = require 'fs'
 config = require 'app-config'
 Log = require 'log'
 async = require 'async'
-fetch = require 'node-fetch'
+request = require 'request'
 tosource = require 'tosource'
 
 postFileToSlack = (filePath, channel, callback)->
@@ -22,19 +22,20 @@ postFileToSlack = (filePath, channel, callback)->
 
 	log = new Log(level)
 
-	form = new FormData
-	form.append "token", config.avantik.SLACK_FILE_UPLOAD_TOKEN
-	form.append "file", fs.createReadStream filePath
-	form.append "channels", "#{channel}"
+	form = 
+		"token": config.avantik.SLACK_FILE_UPLOAD_TOKEN
+		"file": fs.createReadStream filePath
+		"channels": "#{channel}"
 
 	log.debug "upload content\ntoken: #{config.avantik.SLACK_FILE_UPLOAD_TOKEN}\n#{filePath}\n#{channel}"
 
-	fetch slackFileUploadEndpoint, { method: "POST", body: form }
-	.then (res) ->
-		return res.json()
-	.then (json) ->
-		log.debug "slack file upload result json #{JSON.stringify json}"
-		callback null, json
+	request.post { url: slackFileUploadEndpoint, formData: form }, (err, httpResp, body) ->
+		if err?
+			log.error "http post error: #{err}"
+			callback err, null
+		else
+			log.info "slack file upload result json #{JSON.stringify body}"
+			callback null, body
 
 
 module.exports.postFileToSlack = postFileToSlack
