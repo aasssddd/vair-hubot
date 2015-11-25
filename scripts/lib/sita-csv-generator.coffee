@@ -89,10 +89,7 @@ class SitaAirCarrierCSV
 
 		data.forEach (item) ->
 			csvStream.write item
-		csvStream.end()
-
-
-			
+		csvStream.end()	
 		
 	commit: (fileName, callback) ->
 		level = process.env.HUBOT_LOG_LEVEL

@@ -25,7 +25,7 @@ postFileToSlack = (filePath, channel, callback)->
 	form = new FormData
 	form.append "token", config.avantik.SLACK_FILE_UPLOAD_TOKEN
 	form.append "file", fs.createReadStream filePath
-	form.append "channels", "##{channel}"
+	form.append "channels", "#{channel}"
 
 	log.debug "upload content\ntoken: #{config.avantik.SLACK_FILE_UPLOAD_TOKEN}\n#{filePath}\n#{channel}"
 

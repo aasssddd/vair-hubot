@@ -32,6 +32,7 @@ getFlightSchedule = (data, callback) ->
 		flights.push data.flight 
 	else 
 		flights = config.avantik.AVANTIK_QUERY_FLIGHT.split(";").map (val) -> val
+		log.info "query flights #{flights}"
 
 	# query schedule
 	soap.createClient schedule_api_url, (err, client) ->
@@ -57,14 +58,14 @@ getFlightSchedule = (data, callback) ->
 					if qryErr?
 						errMsg = "Query Error #{qryErr}"
 					else
-						parseString result.GetFlightInformationDepartureResult, (err, data) ->
+						parseString result.GetFlightInformationDepartureResult, (err, resData) ->
 							if err?
+								log.error "parse flight information data error : #{err}"
 								callback err, flight_data
 							else
-								flight_data.push data
-								log.debug "data record proceed\n#{tosource flight_data}"
+								flight_data.push resData
+								log.debug "flight record proceed: #{resData.Flights.Details[0].flight_number[0]}"
 								cb()
-				
 			,() ->
 				log.info "flight schedule data collected"
 				log.debug "#{JSON.stringify flight_data}"
