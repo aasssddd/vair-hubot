@@ -69,6 +69,7 @@ module.exports = (robot) ->
 					schedule_date.minute schedule_time[1]
 					schedule_date.add job_trigger_offset_hour, 'hour'
 					robot.logger.info "JOB is scheduled at #{schedule_date.toDate()}"
+					robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passenger data of flight ZV#{data.flight_no} will be send at #{schedule_date.toDate()}"
 					schedule.scheduleJob schedule_date.toDate(), ((obj) ->
 						robot.emit 'sendPassengerInfo', obj).bind null, data
 
