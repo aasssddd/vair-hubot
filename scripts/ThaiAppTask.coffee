@@ -2,7 +2,7 @@
 # Description:
 #   Send Passengers Manifest to SITA FTP Server
 # Commands:
-#	hubot resend sita batch - manual trigger send action, if something get wrong
+#	hubot restart sita schedule - manual trigger send action, if something get wrong
 #	hubot resend sita on flight xxx at yyyy/mm/dd
 # Notes:
 #   web service to call avantik web service
@@ -36,7 +36,7 @@ module.exports = (robot) ->
 			retrive flight schedule and create scheduled job
 	###
 	robot.on 'retriveSchedule', () ->
-		time_zone_offset = config.avantik.GMT_HOUR
+		
 		qry_date = moment().format("YYYYMMDD")
 		args = 
 			fdate: qry_date
@@ -45,7 +45,7 @@ module.exports = (robot) ->
 
 		getFlightSchedule args, (err, res) ->
 			#run job 3 hours earlier before departure
-			job_trigger_offset_hour = -3
+			job_trigger_offset_hour = config.avantik.SITA_SEND_TIME_SHIFT
 			if err != ""
 				robot.logger.error "Err #{err}"
 				robot.send "Err #{err}"
@@ -73,7 +73,7 @@ module.exports = (robot) ->
 					schedule.scheduleJob schedule_date.toDate(), ((obj) ->
 						robot.emit 'sendPassengerInfo', obj).bind null, data
 
-	robot.respond /test schedule/i, () ->
+	robot.respond /restart sita schedule/i, () ->
 		robot.emit 'retriveSchedule'
 
 
@@ -128,7 +128,7 @@ module.exports = (robot) ->
 				processed = false
 				serviceInitialize client, initBean, (err, initResult) ->
 					if err?
-						errMsg += "#{err}"
+						robot.logger.error WrapErrorMessage 
 					else if "000" not in initResult.error.code
 						errMsg += "#{initResult.error.code} #{initResult.error.message}"
 					else
@@ -204,7 +204,10 @@ module.exports = (robot) ->
 								# save csv file
 								robot.logger.info "starting generate target files"
 								filePath = config.avantik.SITA_CSV_FILE_PATH
-								csvGenerator.commit_2 file_name, () ->
+								csvGenerator.commit_2 file_name, (writeErr) ->
+									if writeErr?
+										robot.logger.error "csv file write error: #{writeErr}"
+										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
 									setTimeout ()->
 										# POST file to Slack Channel
 										postFileToSlack filePath + file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, resp) ->
@@ -237,3 +240,6 @@ module.exports = (robot) ->
 													else
 														robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passengers manifest on flight #{flight_num} (departure at #{depDate} #{depTime}) has sent to SITA"
 									, wait_file_save_exec
+
+WrapErrorMessage = (msg) ->
+	return "Oops! Send passenger manifest to SITA fail!\nError Reason:#{msg}"

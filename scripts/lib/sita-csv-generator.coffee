@@ -69,6 +69,10 @@ class SitaAirCarrierCSV
 	add: (record) ->
 		data.push record
 
+	###
+		file name: target file name
+		callback: err
+	###
 	commit_2: (fileName, callback) ->
 		level = process.env.HUBOT_LOG_LEVEL
 		if not level?
@@ -83,6 +87,8 @@ class SitaAirCarrierCSV
 			log.debug "file saved!"
 			data = []
 			callback()
+		csvStream.on "error", ()->
+			callback "CSV File Write Error", null
 
 		writableStream = fs.createWriteStream filePath + fileName
 		csvStream.pipe writableStream
