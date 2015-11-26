@@ -5,7 +5,7 @@ soap = require 'soap'
 dateFormat = require 'dateformat'
 {parseString} = require 'xml2js'
 tosource = require 'tosource'
-Log = require 'log'
+{log} = require './vair-logger'
 async = require 'async'
 
 ###
@@ -15,11 +15,7 @@ async = require 'async'
 ###
 
 getFlightSchedule = (data, callback) ->
-	level = process.env.HUBOT_LOG_LEVEL
-	if not level?
-		level = "info"
 
-	log = new Log(level)
 	errMsg = ""
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
 	dataFormatString = "yyyymmdd"

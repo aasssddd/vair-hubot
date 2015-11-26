@@ -3,7 +3,7 @@
 csv = require "fast-csv"
 fs = require 'fs'
 async = require 'async'
-Log = require 'log'
+log = require './vair-logger'
 tosource = require 'tosource'
 config = require 'app-config'
 
@@ -74,11 +74,6 @@ class SitaAirCarrierCSV
 		callback: err
 	###
 	commit_2: (fileName, callback) ->
-		level = process.env.HUBOT_LOG_LEVEL
-		if not level?
-			level = "info"
-
-		log = new Log(level)
 		
 		data.push new SitaAirCarrierRecord("***END")
 
@@ -98,11 +93,6 @@ class SitaAirCarrierCSV
 		csvStream.end()	
 		
 	commit: (fileName, callback) ->
-		level = process.env.HUBOT_LOG_LEVEL
-		if not level?
-			level = "info"
-
-		log = new Log(level)
 
 		data.push new SitaAirCarrierRecord("***END")
 

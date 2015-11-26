@@ -4,7 +4,7 @@ fs = require 'fs'
 path = require 'path'
 {EventEmitter} = require 'events'
 tosource = require 'tosource'
-Log = require 'log'
+{log} = require './vair-logger'
 
 class S3FileAccessHelper
 
