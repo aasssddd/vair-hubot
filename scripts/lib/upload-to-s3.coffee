@@ -2,7 +2,7 @@
 AWS = require 'aws-sdk'
 fs = require 'fs'
 path = require 'path'
-{EventEmitter} = require 'events'
+config = require 'app-config'
 tosource = require 'tosource'
 {log} = require './vair-logger'
 
@@ -19,12 +19,9 @@ class S3FileAccessHelper
 				target_name: '' -- same as source file name
 			}
 	###
-	@UploadFile: (filePath, opts, callback) ->
-		level = process.env.HUBOT_LOG_LEVEL
-		if not level?
-			level = "info"
-
-		log = new Log(level)
+	@UploadFile: (file_name, opts, callback) ->
+		
+		filePath = config.avantik.SITA_CSV_FILE_PATH + file_name
 
 		if typeof opts is 'function' and callback is undefined
 			callback = opts

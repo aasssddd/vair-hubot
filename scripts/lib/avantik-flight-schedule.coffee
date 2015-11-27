@@ -40,7 +40,7 @@ getFlightSchedule = (data, callback) ->
 				options = 
 					flight: item
 					fdate: data.fdate
-				log.info "start querying flight schedule"
+				log.info "start querying flight #{item} schedule data"
 				log.debug "of #{tosource options}"
 				args = 
 					dtFlightFrom: options.fdate
@@ -59,8 +59,11 @@ getFlightSchedule = (data, callback) ->
 								log.error "parse flight information data error : #{err}"
 								callback err, flight_data
 							else
-								flight_data.push resData
-								log.debug "flight record proceed: #{resData.Flights.Details[0].flight_number[0]}"
+								if resData? && resData.Flights.Details?
+									flight_data.push resData
+									log.debug "flight record proceed: #{resData.Flights.Details[0].flight_number[0]}"
+								else
+									log.warning "ZV#{args.FlightNumber}: no flight record found "
 								cb()
 			,() ->
 				log.info "flight schedule data collected"

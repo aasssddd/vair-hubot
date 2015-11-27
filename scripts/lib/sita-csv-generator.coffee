@@ -3,7 +3,7 @@
 csv = require "fast-csv"
 fs = require 'fs'
 async = require 'async'
-log = require './vair-logger'
+{log} = require './vair-logger'
 tosource = require 'tosource'
 config = require 'app-config'
 

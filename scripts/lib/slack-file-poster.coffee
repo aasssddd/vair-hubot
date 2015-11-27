@@ -30,7 +30,7 @@ postFileToSlack = (fileName, channel, callback)->
 			log.error "http post error: #{err}"
 			callback err, null
 		else
-			log.info "slack file upload result json #{JSON.stringify body}"
+			log.debug "slack file upload result json #{JSON.stringify body}"
 			callback null, body
 
 
