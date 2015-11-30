@@ -1,5 +1,3 @@
-# just-for-fun.coffee
-
 module.exports = (robot) ->
 
 	robot.on "off-the-work-notice", (res) ->

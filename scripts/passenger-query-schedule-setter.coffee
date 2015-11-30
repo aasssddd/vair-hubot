@@ -12,7 +12,7 @@ config = require 'app-config'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {SitaAirCarrierCSV, SitaAirCarrierRecord} = require './lib/sita-csv-generator'
 {postFileToSlack} = require './lib/slack-file-poster'
-{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
+{wrapErrorMessage, getSitaFileName} = require './thai-app-utils'
 
 module.exports = (robot) ->
 	###
