@@ -131,11 +131,11 @@ module.exports = (robot) ->
 		files = fs.readdirSync path
 
 		if files?
-			fileSearchPattern = /ZV#{flight_no}/i
+			fileSearchPattern = "ZV#{flight_no}"
 			search_result = files.filter (file_name) ->
-				match = fileSearchPattern.test file_name
-				robot.logger.info "file #{file_name} matches? #{match}"
-				return match
+				match = file_name.indexOf fileSearchPattern
+				robot.logger.info "file #{file_name} matches #{fileSearchPattern}? #{match}"
+				return match > -1
 			if search_result 
 				return SendToSita search_result[0], (err) ->
 					if err?

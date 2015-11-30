@@ -10,6 +10,7 @@
 #
 # Notes:
 #   portal for manipulate thai-app
+#
 
 moment = require 'moment'
 string = require 'string'
@@ -32,9 +33,9 @@ module.exports = (robot) ->
 	robot.respond /restart sita schedule/i, () ->
 		robot.emit 'retriveSchedule'
 
-	robot.respond /clean everything about SITA/i, ()->
+	robot.respond /clean everything about SITA/i, (res)->
 		sitaScheduleHouseKeeping()
-		robot.reply "data has been clean for you"
+		res.reply "data has been clean for you"
 
 	###
 		send to sita immediately
@@ -46,7 +47,7 @@ module.exports = (robot) ->
 	###
 		resend file to sita
 	###
-	robot.respond /generate passenger data on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
+	robot.respond /generate sita data on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
 		args = 
 		flight: res.match[1]
 		fdate: moment(res.match[2], "YYYY/MM/DD").format("YYYYMMDD")
