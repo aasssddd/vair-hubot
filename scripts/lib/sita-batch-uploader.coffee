@@ -12,7 +12,7 @@ class SitaFTPHelper
 
 		options = 
 			host: process.en ? ''
-			username: 
+			username: ''
 
 		if typeof opts is 'function' and callback is undefined
 			callback = opts
