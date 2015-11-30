@@ -9,7 +9,7 @@ SendToSita = require './lib/sita-sender'
 module.exports = (robot) ->
 
 	robot.on 'SendSitaSchedule', () ->
-		qry_date = moment().format("YYYYMMDD")
+		qry_date = moment().format "YYYYMMDD"
 		args = 
 			fdate: qry_date
 
