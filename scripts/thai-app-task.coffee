@@ -14,7 +14,7 @@ dateFormat = require 'dateformat'
 moment = require 'moment'
 async = require 'async'
 {SendToSita} = require './lib/sita-sender'
-{ThaiAppScheduleCoordinator} = require './lib/thaiapp-schedule-coordinator'
+{thaiAppScheduleCoordinator} = require './lib/thaiapp-schedule-coordinator'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
@@ -22,14 +22,14 @@ async = require 'async'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
 {S3FileAccessHelper} = require './lib/upload-to-s3'
 {postFileToSlack} = require './lib/slack-file-poster'
-{WrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
+{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 
 module.exports = (robot) ->
 
 	robot.on 'listAllSchedule', ()->
 		room = config.avantik.AVANTIK_MESSAGE_ROOM
-		robot.messageRoom room, "passenger schedule: #{JSON.stringify ThaiAppScheduleCoordinator.listCurrentPassengerQueryJobs()}"
-		robot.messageRoom room, "sita schedule: #{JSON.stringify ThaiAppScheduleCoordinator.listCurrentSitaScheduleJobs()}"
+		robot.messageRoom room, "passenger schedule: #{JSON.stringify thaiAppScheduleCoordinator.listCurrentPassengerQueryJobs()}"
+		robot.messageRoom room, "sita schedule: #{JSON.stringify thaiAppScheduleCoordinator.listCurrentSitaScheduleJobs()}"
 
 	###
 		daily job:
@@ -55,7 +55,7 @@ module.exports = (robot) ->
 			job_trigger_offset_hour = config.avantik.SITA_SEND_TIME_SHIFT
 			if err != ""
 				robot.logger.error "Err #{err}"
-				robot.messageRoom room, WrapErrorMessage "#{err}"
+				robot.messageRoom room, wrapErrorMessage "#{err}"
 			else
 				# set schedule task 
 				res.forEach (item) ->
@@ -77,7 +77,7 @@ module.exports = (robot) ->
 					schedule_date.add job_trigger_offset_hour, 'hour'				
 
 					# set passenger query jobs
-					ThaiAppScheduleCoordinator.addPassengerQueryJob data.flight_no, ((obj) ->
+					thaiAppScheduleCoordinator.addPassengerQueryJob data.flight_no, ((obj) ->
 						robot.emit 'sendPassengerInfo', obj
 						).bind null, data
 
@@ -85,7 +85,7 @@ module.exports = (robot) ->
 					file_name = getSitaFileName data.flight_no, data.dep_date
 
 					# set sita schedule jobs
-					ThaiAppScheduleCoordinator.addSitaScheduleJob data.flight_no, schedule_date.toDate(), ((obj) ->
+					thaiAppScheduleCoordinator.addSitaScheduleJob data.flight_no, schedule_date.toDate(), ((obj) ->
 						retry_file_test = config.avantik.SITA_FILE_CHECK_TIMEOUT_SECOND
 						fileExist = checkAndWaitFileGenerate file_name, retry_file_test, (err) ->
 							if err?
@@ -95,7 +95,7 @@ module.exports = (robot) ->
 								SendToSita file_name, (err) ->
 									if err?
 										robot.logger.error "fail sending file to sita"
-										robot.messageRoom room, WrapErrorMessage "fail sending file to sita"
+										robot.messageRoom room, wrapErrorMessage "fail sending file to sita"
 									else
 										robot.messageRoom room, "file #{file_name} has sent to SITA"
 
@@ -108,7 +108,7 @@ module.exports = (robot) ->
 										robot.logger.info "send file #{file_name} to slack successful"
 
 							# un-register job 
-							ThaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
+							thaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
 							robot.logger.info "unbind task of #{data.flight_no}"
 
 						).bind null, file_name
@@ -127,7 +127,7 @@ module.exports = (robot) ->
 			if search_result 
 				return SendToSita search_result[0], (err) ->
 					if err?
-						robot.logger.error WrapErrorMessage "#{err}"
+						robot.logger.error wrapErrorMessage "#{err}"
 					else
 						robot.messageRoom  room, "file #{search_result} is sent for you"
 

@@ -1,12 +1,10 @@
 # fly-schedule-setter.coffee
-
 config = require 'app-config'
 string = require 'string'
 getFlightSchedule = require './lib/avantik-flight-schedule'
 moment = require 'moment'
-ThaiAppScheduleCoordinator = require './lib/thaiapp-schedule-coordinator'
+thaiAppScheduleCoordinator = require './lib/thaiapp-schedule-coordinator'
 SendToSita = require './lib/sita-sender'
-
 
 module.exports = (robot) ->
 
@@ -48,11 +46,11 @@ module.exports = (robot) ->
 					schedule_date.add job_trigger_offset_hour, 'hour'
 					robot.logger.info "JOB is scheduled at #{schedule_date.toDate()}"
 					robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "Passenger data of flight ZV#{data.flight_no} will be send at #{schedule_date.toDate()}"
-					ThaiAppScheduleCoordinator.addSitaScheduleJob schedule_date.toDate(), ((obj) ->
+					thaiAppScheduleCoordinator.addSitaScheduleJob schedule_date.toDate(), ((obj) ->
 
 						#send file to sita at scheduled time
 						SendToSita "#{file_name}"
 
 						# after sent, canceling today's send job
-						ThaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
+						thaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
 						).bind null, data

@@ -13,7 +13,7 @@ config = require 'app-config'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {SitaAirCarrierCSV, SitaAirCarrierRecord} = require './lib/sita-csv-generator'
 {postFileToSlack} = require './lib/slack-file-poster'
-{WrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping} = require './thai-app-utils'
+{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping} = require './thai-app-utils'
 
 module.exports = (robot) ->
 	###
@@ -37,16 +37,16 @@ module.exports = (robot) ->
 
 		soap.createClient initBean.url, (soapErr, client) ->
 			if soapErr? 
-				robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "#{soapErr}"
+				robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "#{soapErr}"
 			else
 				processed = false
 				serviceInitialize client, initBean, (initErr, initResult) ->
 					if err?
 						robot.logger.error "Err: #{initErr}" 
-						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "#{initErr}"
+						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "#{initErr}"
 
 					else if "000" not in initResult.error.code
-						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "#{initResult.error.code} #{initResult.error.message}"
+						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "#{initResult.error.code} #{initResult.error.message}"
 
 					else
 						robot.logger.debug "request: #{client.lastRequest}"
@@ -67,7 +67,7 @@ module.exports = (robot) ->
 
 						getPassengerManifest args, client, (passErr, passResult) ->
 							if passErr?
-								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "err! #{JSON.stringify passErr}"
+								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "err! #{JSON.stringify passErr}"
 							else
 								robot.logger.debug "request header: #{JSON.stringify client.lastRequestHeaders}"
 								robot.logger.debug "request: #{client.lastRequest}"
@@ -130,7 +130,7 @@ module.exports = (robot) ->
 										
 										S3FileAccessHelper.UploadFile file_name, (s3Err, data) ->
 											if err?
-												robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "file upload to s3 error: #{s3Err}"
+												robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
 											else
 												robot.logger.info "file #{file_name} uploaded"
 												robot.reply "S3_upload Ok!"

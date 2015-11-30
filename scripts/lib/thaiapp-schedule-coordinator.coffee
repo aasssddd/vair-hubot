@@ -10,7 +10,7 @@ config = require 'app-config'
 tosource = require 'tosource'
 
 
-class ThaiAppScheduleCoordinator
+class thaiAppScheduleCoordinator
 	###
 		avantik api call frequency
 	###
@@ -102,4 +102,4 @@ class ThaiAppScheduleCoordinator
 	@listCurrentSitaScheduleJobs: () ->
 		return @sitaScheduleJobs
 
-module.exports.ThaiAppScheduleCoordinator = ThaiAppScheduleCoordinator
+module.exports.thaiAppScheduleCoordinator = thaiAppScheduleCoordinator

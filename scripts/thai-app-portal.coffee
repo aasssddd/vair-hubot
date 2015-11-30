@@ -18,7 +18,7 @@ string = require 'string'
 tosource = require 'tosource'
 {SendToSita} = require './lib/sita-sender'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
-{WrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping} = require './thai-app-utils'
+{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping} = require './thai-app-utils'
 
 module.exports = (robot) ->
 

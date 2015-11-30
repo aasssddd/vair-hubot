@@ -1,6 +1,6 @@
 # thai-app-utils.coffee
 
-{ThaiAppScheduleCoordinator} = require './lib/thaiapp-schedule-coordinator'
+{thaiAppScheduleCoordinator} = require './lib/thaiapp-schedule-coordinator'
 moment = require 'moment'
 fs = require 'fs'
 config = require 'app-config'
@@ -9,7 +9,7 @@ rimraf = require 'rimraf'
 mkdirp = require 'mkdirp'
 dateFormat = require 'dateformat'
 
-WrapErrorMessage = (msg) ->
+wrapErrorMessage = (msg) ->
 	return "Oops! Send passenger manifest to SITA fail! Error Reason:#{msg}"
 
 
@@ -21,7 +21,7 @@ getSitaFileName = (flight_no, dep_date) ->
 
 sitaScheduleHouseKeeping = () ->
 	# reset job queue
-	ThaiAppScheduleCoordinator.cancelAllJobs()
+	thaiAppScheduleCoordinator.cancelAllJobs()
 
 	# check if folder exists?
 	path = config.avantik.SITA_CSV_FILE_PATH
@@ -57,5 +57,5 @@ checkAndWaitFileGenerate = (file_name, timeout, callback) ->
 
 
 module.exports = {
-	WrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate
+	wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate
 }
