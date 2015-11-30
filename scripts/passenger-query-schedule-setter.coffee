@@ -119,7 +119,7 @@ module.exports = (robot) ->
 
 								# save csv file
 								robot.logger.debug "starting generate target file #{file_name}"
-								csvGenerator.commit_2 file_name, (writeErr) ->
+								csvGenerator.commit file_name, (writeErr) ->
 									if writeErr?
 										robot.logger.error "csv file write error: #{writeErr}"
 										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"

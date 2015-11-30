@@ -6,6 +6,7 @@ async = require 'async'
 {log} = require './vair-logger'
 tosource = require 'tosource'
 config = require 'app-config'
+csvWriter = require 'csv-write-stream'
 
 ###
 	record for generate SitaAirCarrierCSV 
@@ -37,6 +38,7 @@ class SitaAirCarrierRecord
 ###
 class SitaAirCarrierCSV
 	data = []
+
 	filePath = config.avantik.SITA_CSV_FILE_PATH
 
 	constructor: (flightNum, depPort, depDate, depTime, arrPort, arrDate, arrTime, options) ->
@@ -49,8 +51,8 @@ class SitaAirCarrierCSV
 
 
 		data.push new SitaAirCarrierRecord(opts.version)
-		data.push new SitaAirCarrierRecord("*** HEADER")
-		data.push new SitaAirCarrierRecord("*** BATCH", opts.batch)
+		data.push new SitaAirCarrierRecord("***HEADER")
+		data.push new SitaAirCarrierRecord("***BATCH", opts.batch)
 		data.push new SitaAirCarrierRecord("*TYPE", opts.type)
 		data.push new SitaAirCarrierRecord("*DIRECTION", opts.direction)
 		data.push new SitaAirCarrierRecord(opts.service, flightNum)
@@ -74,7 +76,7 @@ class SitaAirCarrierCSV
 		callback: err
 	###
 	commit_2: (fileName, callback) ->
-		
+
 		data.push new SitaAirCarrierRecord("***END")
 
 		csvStream = csv.createWriteStream {headers: true}
@@ -90,8 +92,9 @@ class SitaAirCarrierCSV
 
 		data.forEach (item) ->
 			csvStream.write item
-		csvStream.end()	
-		
+		csvStream.end()		
+	
+
 	commit: (fileName, callback) ->
 
 		data.push new SitaAirCarrierRecord("***END")
@@ -100,17 +103,15 @@ class SitaAirCarrierCSV
 		data.forEach (objIns) ->
 			file.push SitaAirCarrierRecord.arrayOf objIns
 
-		writer = csvWriter({headers : ["DocumentType", "Nationality", "DocumentType", "DocumentExpiryDate", 
-			"IssuingState", "FamilyName", "GivenName", "DateofBirth", "Sex", "CountryofBirth", "TravelType", 
+		writer = csvWriter({headers : ["Document Type", "Nationality", "Document Type", "Document Expiry Date", 
+			"Issuing State", "Family Name", "Given Names", "Date of Birth", "Sex", "Country of Birth", "Travel Type", 
 			"Override", "Response"]})
 		writer.pipe(fs.createWriteStream filePath + fileName)
 
-		writer.on 'close', ()->
+		writer.on 'finish', ()->
 			log.debug "file saved!"
 			callback()
 
-		writer.on 'end', ()->
-			log.debug "file write end"
 
 		file.forEach (item)->
 			writer.write item, () ->

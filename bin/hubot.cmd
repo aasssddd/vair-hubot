@@ -11,13 +11,9 @@ set HUBOT_TRELLO_TOKEN=fdf0b32eee593ae165c785cc1af0c4b88b0406dff67aeb42f492160d0
 set HUBOT_WEATHER_CELSIUS=true
 set HUBOT_YELP_CONSUMER_KEY=JzgdOryrypRgVxImzLl_7A
 set HUBOT_YELP_CONSUMER_SECRET=g2HSX-m4sWabuVJW9mIf8Idw0y0
-rem set HUBOT_YELP_SEARCH_ADDRESS=No.139, Zhengzhou Road Datong Dist., Taipei
-rem set HUBOT_YELP_SEARCH_RADIUS=1000
-rem set HUBOT_YELP_SORT=0
-set HUBOT_YELP_DEFAULT_LOCATION=No.139, Zhengzhou Road Datong Dist., Taipei
+set HUBOT_YELP_DEFAULT_LOCATION=聯合醫院中興院區
 set HUBOT_YELP_TOKEN=_gWbpcD0rgFTmXT_wlAdkSaQqOse_On9
 set HUBOT_YELP_TOKEN_SECRET=o6RkkCR_8rVRzXsoYkrAl0DR7_0
 set NODE_ENV=prod
-set HUBOT_HANGUPS_PYTHON=python
 
-npm install && node_modules\.bin\hubot.cmd --name "pal" %* 
+npm install && node_modules\.bin\hubot.cmd --name "pal" %*
