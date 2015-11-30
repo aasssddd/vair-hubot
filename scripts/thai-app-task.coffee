@@ -99,6 +99,16 @@ module.exports = (robot) ->
 									else
 										robot.messageRoom room, "file #{file_name} has sent to SITA"
 
+								# upload to S3	
+								robot.logger.info "starting upload file #{file_name} to s3"
+								
+								S3FileAccessHelper.UploadFile file_name, (s3Err, data) ->
+									if err?
+										robot.logger.error "file #{file_name} upload to S3 fail"
+										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
+									else
+										robot.logger.info "file #{file_name} uploaded to S3"
+
 								# POST file to Slack Channel
 								postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, resp) ->
 									if err?
@@ -107,14 +117,7 @@ module.exports = (robot) ->
 										robot.logger.debug "send file result #{tosource resp}"
 										robot.logger.info "send file #{file_name} to slack successful"
 
-								# upload to S3	
-								robot.logger.info "starting upload file #{file_name} to s3"
 								
-								S3FileAccessHelper.UploadFile file_name, (s3Err, data) ->
-									if err?
-										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
-									else
-										robot.logger.info "file #{file_name} uploaded to S3"
 
 							# un-register SITA job 
 							thaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
@@ -136,7 +139,7 @@ module.exports = (robot) ->
 				match = file_name.indexOf fileSearchPattern
 				robot.logger.info "file #{file_name} matches #{fileSearchPattern}? #{match}"
 				return match > -1
-			if search_result 
+			if search_result.length >= 1
 				return SendToSita search_result[0], (err) ->
 					if err?
 						robot.logger.error wrapErrorMessage "#{err}"

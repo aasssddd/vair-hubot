@@ -7,13 +7,28 @@ async = require 'async'
 tosource = require 'tosource'
 config = require 'app-config'
 csvWriter = require 'csv-write-stream'
+moment = require 'moment'
 
 ###
 	record for generate SitaAirCarrierCSV 
 ###
 class SitaAirCarrierRecord
 
-	constructor: (@DocumentType, @Nationality, @DocumentNumber, @DocumentExpiryDate, @IssuingState, @FamilyName, @GivenName, 	@DateofBirth, @Sex, @CountryofBirth, @TravelType, @Override, @Response) ->
+	constructor: (
+		@DocumentType = "P", 
+		@Nationality = "TW", 
+		@DocumentNumber = "00000000", 
+		@DocumentExpiryDate = moment("2200/12/31", "YYYY/MM/DD").format("DD-MMM-YYYY"), 
+		@IssuingState = @Nationality, 
+		@FamilyName, 
+		@GivenName, 
+		@DateofBirth = moment("1991/03/12", "YYYY/MM/DD").format("DD-MMM-YYYY"), 
+		@Sex, 
+		@CountryofBirth = "TW", 
+		@TravelType = "N", 
+		@Override, 
+		@Response) ->
+
 
 	@arrayOf: (record)->
 		data = [record.DocumentType, record.Nationality, record.DocumentNumber, record.DocumentExpiryDate, record.IssuingState, record.FamilyName, record.GivenName, record.DateofBirth, record.Sex, record.CountryofBirth, record.TravelType, record.Override, record.Response]
@@ -47,26 +62,26 @@ class SitaAirCarrierCSV
 			batch: "APP"
 			type: "P"
 			direction: "I"
-			service: "*FLIGHT"
+			service: "*AIRCRAFT"
 
 
-		data.push new SitaAirCarrierRecord(opts.version)
-		data.push new SitaAirCarrierRecord("***HEADER")
-		data.push new SitaAirCarrierRecord("***BATCH", opts.batch)
-		data.push new SitaAirCarrierRecord("*TYPE", opts.type)
-		data.push new SitaAirCarrierRecord("*DIRECTION", opts.direction)
-		data.push new SitaAirCarrierRecord(opts.service, flightNum)
-		data.push new SitaAirCarrierRecord("*DEP PORT", depPort)
-		data.push new SitaAirCarrierRecord("*DEP DATE", depDate)
-		data.push new SitaAirCarrierRecord("*DEP TIME", depTime)
-		data.push new SitaAirCarrierRecord("*ARR PORT", arrPort)
-		data.push new SitaAirCarrierRecord("*ARR DATE", arrDate)
-		data.push new SitaAirCarrierRecord("*ARR TIME", arrTime)
-		data.push new SitaAirCarrierRecord("*TB PORT", "")
-		data.push new SitaAirCarrierRecord("*TB DATE", "")
-		data.push new SitaAirCarrierRecord("*TB TIME", "")
-		data.push new SitaAirCarrierRecord()
-		data.push new SitaAirCarrierRecord("***START")
+		data.push new SitaAirCarrierRecord opts.version, "", "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "***HEADER", "", "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "***BATCH", opts.batch, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*TYPE", opts.type, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*DIRECTION", opts.direction, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord opts.service, flightNum, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*DEP PORT", depPort, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*DEP DATE", depDate, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*DEP TIME", depTime, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*ARR PORT", arrPort, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*ARR DATE", arrDate, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*ARR TIME", arrTime, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*TB PORT", "", "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*TB DATE", "", "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*TB TIME", "", "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "", "", "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "***START", "", "", "", "", "", "", "", "", "", "", "", ""
 
 	add: (record) ->
 		data.push record
@@ -97,7 +112,7 @@ class SitaAirCarrierCSV
 
 	commit: (fileName, callback) ->
 
-		data.push new SitaAirCarrierRecord("***END")
+		data.push new SitaAirCarrierRecord "***END", "", "", "", "", "", "", "", "", "", "", "", ""
 
 		file = []
 		data.forEach (objIns) ->
@@ -111,7 +126,6 @@ class SitaAirCarrierCSV
 		writer.on 'finish', ()->
 			log.debug "file saved!"
 			callback()
-
 
 		file.forEach (item)->
 			writer.write item, () ->

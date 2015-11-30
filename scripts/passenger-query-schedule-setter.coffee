@@ -7,7 +7,7 @@ moment = require 'moment'
 dateFormat = require 'dateformat'
 async = require 'async'
 config = require 'app-config'
-{S3FileAccessHelper} = require './lib/upload-to-s3'
+
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
@@ -105,12 +105,13 @@ module.exports = (robot) ->
 							
 							async.forEachOf passenger, (item, key, cb) ->
 								robot.logger.debug "passenger: #{JSON.stringify item}"
-								passport_expiry_string = ""
+								passport_expiry_string = null
 								birthday_string = ""
 								if item.passport_expiry_date?
 									passport_expiry_string = dateFormat (new Date item.passport_expiry_date), sita_date_format_string
 								if item.date_of_birth?
 									birthday_string = dateFormat (new Date item.date_of_birth), sita_date_format_string								
+
 								csvGenerator.add new SitaAirCarrierRecord "P", item.nationality_rcd, item.passport_number, passport_expiry_string, null, item.lastname, item.firstname,	birthday_string, item.gender_type_rcd, item.nationality_rcd, travel_type, null, null
 								cb()
 							, () ->
@@ -123,16 +124,14 @@ module.exports = (robot) ->
 									if writeErr?
 										robot.logger.error "csv file write error: #{writeErr}"
 										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
-									setTimeout ()->
-
-										# upload to S3	
-										robot.logger.info "starting upload file #{file_name} to s3"
-										
-										S3FileAccessHelper.UploadFile file_name, (s3Err, data) ->
+									else
+										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name} saved"
+										###postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, data) ->
 											if err?
-												robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
+												robot.logger.error "post file to slack fail! #{err}"
+												robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "generate file #{file_name} error"
 											else
-												robot.logger.info "file #{file_name} uploaded"
-												robot.reply "S3_upload Ok!"
-
-									, wait_file_save_exec
+												jObj = JSON.parse data
+												if !jObj.ok
+													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file post to slack fail"	
+													robot.logger.error "#{jObj.ok}, #{jObj.error}"###
