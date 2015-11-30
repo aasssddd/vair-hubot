@@ -23,7 +23,7 @@ postFileToSlack = (fileName, channel, callback)->
 		"file": fs.createReadStream filePath + fileName
 		"channels": "#{channel}"
 
-	log.debug "upload content\ntoken: #{config.avantik.SLACK_FILE_UPLOAD_TOKEN}\n#{filePath + fileName}\n#{channel}"
+	log.debug "upload contenttoken: #{config.avantik.SLACK_FILE_UPLOAD_TOKEN} #{filePath + fileName} #{channel}"
 
 	request.post { url: slackFileUploadEndpoint, formData: form }, (err, httpResp, body) ->
 		if err?

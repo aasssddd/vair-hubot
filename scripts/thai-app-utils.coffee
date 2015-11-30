@@ -10,7 +10,7 @@ mkdirp = require 'mkdirp'
 dateFormat = require 'dateformat'
 
 WrapErrorMessage = (msg) ->
-	return "Oops! Send passenger manifest to SITA fail!\nError Reason:#{msg}"
+	return "Oops! Send passenger manifest to SITA fail! Error Reason:#{msg}"
 
 
 getSitaFileName = (flight_no, dep_date) ->

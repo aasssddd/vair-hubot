@@ -49,11 +49,11 @@ module.exports = (robot) ->
 						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "#{initResult.error.code} #{initResult.error.message}"
 
 					else
-						robot.logger.debug "request: \n#{client.lastRequest}"
-						robot.logger.debug "response: \n#{client.lastResponse}"
+						robot.logger.debug "request: #{client.lastRequest}"
+						robot.logger.debug "response: #{client.lastResponse}"
 						robot.logger.debug "Init OK, #{initResult.error.code} #{initResult.error.message}"
 						cookie = new Cookie(client.lastResponseHeaders)
-						robot.logger.debug "Cookie: \n#{JSON.stringify cookie}"
+						robot.logger.debug "Cookie: #{JSON.stringify cookie}"
 
 						# set cookie
 						client.setSecurity(cookie)
@@ -69,9 +69,9 @@ module.exports = (robot) ->
 							if passErr?
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, WrapErrorMessage "err! #{JSON.stringify passErr}"
 							else
-								robot.logger.debug "request header: \n#{JSON.stringify client.lastRequestHeaders}"
-								robot.logger.debug "request: \n#{client.lastRequest}"
-								robot.logger.debug "response: \n#{client.lastResponse}"
+								robot.logger.debug "request header: #{JSON.stringify client.lastRequestHeaders}"
+								robot.logger.debug "request: #{client.lastRequest}"
+								robot.logger.debug "response: #{client.lastResponse}"
 
 							# convert into SITA file format
 							if !passResult.root?

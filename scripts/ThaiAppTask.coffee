@@ -1,7 +1,7 @@
 # ThaiAppTask.coffee
 
 ###
-	scheduled send passengers information to SITA
+scheduled send passengers information to SITA
 ###
 config = require 'app-config'
 tosource = require 'tosource'
@@ -29,8 +29,8 @@ module.exports = (robot) ->
 
 	robot.on 'listAllSchedule', ()->
 		room = config.avantik.AVANTIK_MESSAGE_ROOM
-		robot.messageRoom room, "passenger schedule: \n#{JSON.stringify ThaiAppScheduleCoordinator.listCurrentPassengerQueryJobs()}"
-		robot.messageRoom room, "sita schedule: \n#{JSON.stringify ThaiAppScheduleCoordinator.listCurrentSitaScheduleJobs()}"
+		robot.messageRoom room, "passenger schedule: #{JSON.stringify ThaiAppScheduleCoordinator.listCurrentPassengerQueryJobs()}"
+		robot.messageRoom room, "sita schedule: #{JSON.stringify ThaiAppScheduleCoordinator.listCurrentSitaScheduleJobs()}"
 	###
 		daily job:
 			retrive flight schedule and create scheduled job

@@ -68,6 +68,6 @@ module.exports = (robot) ->
 						dep_time: string(flightDetail.planned_departure_time[0]).padLeft(4, "0").toString()
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
-					robot.logger.info "query passenger information with parameters: \n #{tosource data}"
+					robot.logger.info "query passenger information with parameters: #{tosource data}"
 					robot.emit 'sendPassengerInfo', data
 
