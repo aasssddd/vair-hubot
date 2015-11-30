@@ -2,11 +2,11 @@
 # Description:
 #   Send Passengers Manifest to SITA FTP Server
 # Commands:
-#	hubot list all schedule - [Developer command] See scheduled tasks
-#	hubot clean everything about SITA - hope you will never use this command
-# 	hubot send sita passenger data of flight <flight number> now - no 
+#	hubot list all sita schedule - [Developer command] See scheduled tasks
+#	hubot clean everything about sita - hope you will never use this command
+# 	hubot send sita passenger data of flight <flight number> now
 #	hubot restart sita schedule - manual trigger send action, if something goes wrong
-#	hubot generate passenger data on flight <flight number> at <when> - flight number: node need ZV, when: yyyy/mm/dd
+#	hubot generate sita data on flight <flight number> at <when> - flight number: node need ZV, when: yyyy/mm/dd
 #
 # Notes:
 #   portal for manipulate thai-app
@@ -23,7 +23,7 @@ module.exports = (robot) ->
 	###
 		list all schedule
 	###
-	robot.respond /list all schedule/i, () ->
+	robot.respond /list all sita schedule/i, () ->
 		robot.emit 'listAllSchedule'
 
 	###
@@ -34,6 +34,7 @@ module.exports = (robot) ->
 
 	robot.respond /clean everything about SITA/i, ()->
 		sitaScheduleHouseKeeping()
+		robot.reply "data has been clean for you"
 
 	###
 		send to sita immediately
