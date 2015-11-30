@@ -126,10 +126,11 @@ class SitaAirCarrierCSV
 
 		writer.on 'finish', ()->
 			file = []
+			data = []
 			log.debug "file saved!"
 			callback()
 
-		file.forEach (item)->
+		file.forEach (item) ->
 			writer.write item, () ->
 				log.debug "record: #{JSON.stringify item} is written"
 		writer.end()
