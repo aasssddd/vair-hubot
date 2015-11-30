@@ -36,7 +36,7 @@ module.exports = (robot) ->
 			retrive flight schedule and create scheduled job
 	###
 	robot.on 'retriveSchedule', () ->
-		
+
 		room = config.avantik.AVANTIK_MESSAGE_ROOM
 
 		# house keeping
@@ -83,7 +83,7 @@ module.exports = (robot) ->
 
 					#define file name
 					file_name = getSitaFileName data.flight_no, data.dep_date
-					
+
 					# set sita schedule jobs
 					ThaiAppScheduleCoordinator.addSitaScheduleJob data.flight_no, schedule_date.toDate(), ((obj) ->
 						retry_file_test = config.avantik.SITA_FILE_CHECK_TIMEOUT_SECOND
@@ -132,4 +132,4 @@ module.exports = (robot) ->
 						robot.messageRoom  room, "file #{search_result} is sent for you"
 
 		robot.messageRoom room, "CSV Files not found, please make sure flight number is exist, or try regenerate file you need"
-			
+
