@@ -5,7 +5,7 @@
 ###
 config = require 'app-config'
 fs = require 'fs'
-{log} = require './vair-logger.coffee'
+{log} = require './vair-logger'
 module.exports.SendToSita = (file_name, callback) ->
 	file_path = config.avantik.SITA_CSV_FILE_PATH
 	log.info "start sending file #{file_path}#{file_name}"

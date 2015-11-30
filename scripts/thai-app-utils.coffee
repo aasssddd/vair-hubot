@@ -15,7 +15,7 @@ wrapErrorMessage = (msg) ->
 
 getSitaFileName = (flight_no, dep_date) ->
 	partial_file_name_format = "yyyymmdd"
-	avantik_dateformat_string = "YYYYMMDD"
+	avantik_dateformat_string = "YYYYMMDD"	
 	depDateOri = moment(dep_date, avantik_dateformat_string).toDate()
 	return "ZV#{flight_no}#{dateFormat depDateOri, partial_file_name_format}.csv"
 
@@ -50,7 +50,7 @@ checkAndWaitFileGenerate = (file_name, timeout, callback) ->
 			log.info "file status: #{JSON.stringify stat}"
 			callback null
 	catch 
-		log.warning "file #{file_name} not exist yet, wait for 5 mins and retry" 
+		log.warning "file #{file_name} not exist yet, wait for 5 mins and retry"
 		setTimeout ()->
 			checkAndWaitFileGenerate file_name, (timeout - 300), callback
 		, 300000
