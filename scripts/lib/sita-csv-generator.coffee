@@ -9,6 +9,7 @@ config = require 'app-config'
 csvWriter = require 'csv-write-stream'
 moment = require 'moment'
 
+
 ###
 	record for generate SitaAirCarrierCSV 
 ###
@@ -16,7 +17,7 @@ class SitaAirCarrierRecord
 
 	constructor: (
 		@DocumentType = "P", 
-		@Nationality = "TW", 
+		@Nationality = "TWN", 
 		@DocumentNumber = "00000000", 
 		@DocumentExpiryDate = moment("2200/12/31", "YYYY/MM/DD").format("DD-MMM-YYYY"), 
 		@IssuingState = @Nationality, 
@@ -24,7 +25,7 @@ class SitaAirCarrierRecord
 		@GivenName, 
 		@DateofBirth = moment("1991/03/12", "YYYY/MM/DD").format("DD-MMM-YYYY"), 
 		@Sex, 
-		@CountryofBirth = "TW", 
+		@CountryofBirth = "TWN", 
 		@TravelType = "N", 
 		@Override, 
 		@Response) ->
@@ -124,6 +125,7 @@ class SitaAirCarrierCSV
 		writer.pipe(fs.createWriteStream filePath + fileName)
 
 		writer.on 'finish', ()->
+			file = []
 			log.debug "file saved!"
 			callback()
 

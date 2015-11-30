@@ -7,6 +7,7 @@ moment = require 'moment'
 dateFormat = require 'dateformat'
 async = require 'async'
 config = require 'app-config'
+lookup = require 'country-code-lookup'
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
@@ -110,8 +111,11 @@ module.exports = (robot) ->
 									passport_expiry_string = dateFormat (new Date item.passport_expiry_date), sita_date_format_string
 								if item.date_of_birth?
 									birthday_string = dateFormat (new Date item.date_of_birth), sita_date_format_string								
+								nationality_iso3 = null
+								if item.nationality_rcd? && item.nationality_rcd != undefined
+									nationality_iso3 = lookup.byIso(item.nationality_rcd[0]).iso3
 
-								csvGenerator.add new SitaAirCarrierRecord "P", item.nationality_rcd, item.passport_number, passport_expiry_string, null, item.lastname, item.firstname,	birthday_string, item.gender_type_rcd, item.nationality_rcd, travel_type, null, null
+								csvGenerator.add new SitaAirCarrierRecord "P", nationality_iso3, item.passport_number, passport_expiry_string, nationality_iso3, item.lastname, item.firstname,	birthday_string, item.gender_type_rcd, nationality_iso3, travel_type, null, null
 								cb()
 							, () ->
 								#generate file name
