@@ -7,13 +7,12 @@ moment = require 'moment'
 dateFormat = require 'dateformat'
 async = require 'async'
 config = require 'app-config'
-
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {SitaAirCarrierCSV, SitaAirCarrierRecord} = require './lib/sita-csv-generator'
 {postFileToSlack} = require './lib/slack-file-poster'
-{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping} = require './thai-app-utils'
+{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 
 module.exports = (robot) ->
 	###
