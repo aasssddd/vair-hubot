@@ -20,9 +20,9 @@ async = require 'async'
 {getPassengerManifest} = require './avantik-customer-info'
 {SitaAirCarrierCSV, SitaAirCarrierRecord} = require './lib/sita-csv-generator'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
-{S3FileAccessHelper} = require './lib/upload-to-s3'
 {postFileToSlack} = require './lib/slack-file-poster'
 {wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
+{S3FileAccessHelper} = require './lib/upload-to-s3'
 
 module.exports = (robot) ->
 
@@ -107,8 +107,20 @@ module.exports = (robot) ->
 										robot.logger.debug "send file result #{tosource resp}"
 										robot.logger.info "send file #{file_name} to slack successful"
 
-							# un-register job 
+								# upload to S3	
+								robot.logger.info "starting upload file #{file_name} to s3"
+								
+								S3FileAccessHelper.UploadFile file_name, (s3Err, data) ->
+									if err?
+										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
+									else
+										robot.logger.info "file #{file_name} uploaded to S3"
+
+							# un-register SITA job 
 							thaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
+
+							#un-register avantik job
+							thaiAppScheduleCoordinator.cancelPassengerQueryJob data.flight_no
 							robot.logger.info "unbind task of #{data.flight_no}"
 
 						).bind null, file_name

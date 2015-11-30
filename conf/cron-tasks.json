@@ -8,7 +8,7 @@
         "event" : "lunch-time"
     },
     {
-    	"time" : "0 24 12 * * *",
+    	"time" : "0 0 0 * * *",
     	"event" : "retriveSchedule"
     }
 ]

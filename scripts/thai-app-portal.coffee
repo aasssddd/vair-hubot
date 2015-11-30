@@ -1,5 +1,4 @@
 # thai-app-portal.coffee
-
 # Description:
 #   Send Passengers Manifest to SITA FTP Server
 # Commands:
@@ -10,8 +9,7 @@
 #	hubot generate passenger data on flight <flight number> at <when> - flight number: node need ZV, when: yyyy/mm/dd
 #
 # Notes:
-#   web service to call avantik web service
-
+#   portal for manipulate thai-app
 
 moment = require 'moment'
 string = require 'string'
