@@ -103,7 +103,7 @@ class SitaAirCarrierCSV
 		data.forEach (objIns) ->
 			file.push SitaAirCarrierRecord.arrayOf objIns
 
-		writer = csvWriter({headers : ["Document Type", "Nationality", "Document Type", "Document Expiry Date", 
+		writer = csvWriter({headers : ["Document Type", "Nationality", "Document Number", "Document Expiry Date", 
 			"Issuing State", "Family Name", "Given Names", "Date of Birth", "Sex", "Country of Birth", "Travel Type", 
 			"Override", "Response"]})
 		writer.pipe(fs.createWriteStream filePath + fileName)
