@@ -28,22 +28,6 @@ class thaiAppScheduleCoordinator
 		job = schedule.scheduleJob passengerQueryFreq, queryMethod
 		@passengerQueryJobs.push {"#{flight_no}": job}
 
-	###
-		return true / false
-	###
-	@cancelPassengerQueryJob: (flight_no) ->
-		log.warning "canceling passenger query job of flight #{flight_no}"
-		job = @passengerQueryJobs.filter (item) ->
-			item[flight_no]
-
-		if job? && job[0]?
-			result = scheduleJob.cancelJob job[0][flight_no]
-			if result
-				index = @passengerQueryJobs.indexOf job[0]
-				@passengerQueryJobs.splice index, 1
-			else 
-				log.error "fail canceling passenger query job of flight #{flight_no}"
-			return result
 
 	###
 		add send to sita schedule
@@ -70,18 +54,35 @@ class thaiAppScheduleCoordinator
 				log.error "fail canceling sita schedule job of flight #{flight_no}"
 			return result
 
+	###
+		return true / false
+	###
+	@cancelPassengerQueryJob: (flight_no) ->
+		log.warning "canceling passenger query job of flight #{flight_no}"
+		job = @passengerQueryJobs.filter (item) ->
+			item[flight_no]
+
+		if job? && job[0]?
+			result = schedule.cancelJob job[0][flight_no]
+			if result
+				index = @passengerQueryJobs.indexOf job[0]
+				@passengerQueryJobs.splice index, 1
+			else 
+				log.error "fail canceling passenger query job of flight #{flight_no}"
+			return result
+
 	@cancelAllSitaJobs: () ->
-		@sitaScheduleJobs.forEach (item) ->
-			log.warning "canceling sita schedule job of flight #{item.key}"
-			schedule.cancelJob item.value
+		for key, value of @sitaScheduleJobs
+			for k, v of value
+				@cancelSitaScheduleJob k
 
 		# reset collections
 		@sitaScheduleJobs = []
 
 	@cancelAllPassengerQueryJobs: () ->
-		@passengerQueryJobs.forEach (item) ->
-			log.warning "canceling passenger query job of flight #{item.key}"
-			schedule.cancelJob item.value
+		for key, value of @passengerQueryJobs
+			for k, v of value
+				@cancelPassengerQueryJob k
 
 		# reset collections
 		@passengerQueryJobs = []

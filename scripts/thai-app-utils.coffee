@@ -52,8 +52,8 @@ checkAndWaitFileGenerate = (file_name, timeout, callback) ->
 	catch 
 		log.warning "file #{file_name} not exist yet, wait for 5 mins and retry"
 		setTimeout ()->
-			checkAndWaitFileGenerate file_name, (timeout - 300), callback
-		, 300000
+			checkAndWaitFileGenerate file_name, (timeout - 30), callback
+		, 30000
 
 
 module.exports = {

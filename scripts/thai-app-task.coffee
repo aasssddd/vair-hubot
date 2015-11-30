@@ -81,52 +81,53 @@ module.exports = (robot) ->
 						robot.emit 'sendPassengerInfo', obj
 						).bind null, data
 
-					#define file name
-					file_name = getSitaFileName data.flight_no, data.dep_date
+					
 
 					# set sita schedule jobs
 					thaiAppScheduleCoordinator.addSitaScheduleJob data.flight_no, schedule_date.toDate(), ((obj) ->
+						#define file name
+						f_name = getSitaFileName obj.flight_no, obj.dep_date
+
 						retry_file_test = config.avantik.SITA_FILE_CHECK_TIMEOUT_SECOND
-						fileExist = checkAndWaitFileGenerate file_name, retry_file_test, (err) ->
+						fileExist = checkAndWaitFileGenerate f_name, retry_file_test, (err) ->
 							if err?
-								robot.logger.warning "file #{file_name} not found for #{retry_file_test} seconds, maybe there is no data found for #{data.flight_no}"
-								robot.messageRoom room, "Attention! Flight number: #{data.flight_no} does not contains any passenger data"
+								robot.logger.warning "file #{f_name} not found for #{retry_file_test} seconds, maybe there is no data found for #{obj.flight_no}"
+								robot.messageRoom room, "Attention! Flight number: #{obj.flight_no} does not contains any passenger data"
 							else
-								SendToSita file_name, (err) ->
+								SendToSita f_name, (err) ->
 									if err?
 										robot.logger.error "fail sending file to sita"
 										robot.messageRoom room, wrapErrorMessage "fail sending file to sita"
 									else
-										robot.messageRoom room, "file #{file_name} has sent to SITA"
+										robot.messageRoom room, "file #{f_name} has sent to SITA"
 
 								# upload to S3	
-								robot.logger.info "starting upload file #{file_name} to s3"
+								robot.logger.info "starting upload file #{f_name} to s3"
 								
-								S3FileAccessHelper.UploadFile file_name, (s3Err, data) ->
+								S3FileAccessHelper.UploadFile f_name, (s3Err, result) ->
 									if err?
-										robot.logger.error "file #{file_name} upload to S3 fail"
+										robot.logger.error "file #{f_name} upload to S3 fail"
 										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
 									else
-										robot.logger.info "file #{file_name} uploaded to S3"
+										robot.logger.info "file #{f_name} uploaded to S3"
 
 								# POST file to Slack Channel
-								postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, resp) ->
+								postFileToSlack f_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, resp) ->
 									if err?
 										robot.logger.error "send file to message channel fail: #{err}"
 									else
 										robot.logger.debug "send file result #{tosource resp}"
-										robot.logger.info "send file #{file_name} to slack successful"
-
-								
+										robot.logger.info "send file #{f_name} to slack successful"
 
 							# un-register SITA job 
-							thaiAppScheduleCoordinator.cancelSitaScheduleJob data.flight_no
+							thaiAppScheduleCoordinator.cancelSitaScheduleJob obj.flight_no
+							robot.logger.info "unbind sita task of #{obj.flight_no}"
 
 							#un-register avantik job
-							thaiAppScheduleCoordinator.cancelPassengerQueryJob data.flight_no
-							robot.logger.info "unbind task of #{data.flight_no}"
+							thaiAppScheduleCoordinator.cancelPassengerQueryJob obj.flight_no
+							robot.logger.info "unbind task of #{obj.flight_no}"
 
-						).bind null, file_name
+						).bind null, data
 
 	robot.on 'sendFileToSitaNow', (flight_no) ->
 		path = config.avantik.SITA_CSV_FILE_PATH

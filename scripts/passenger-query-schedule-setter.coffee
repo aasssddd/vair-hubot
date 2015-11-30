@@ -125,13 +125,4 @@ module.exports = (robot) ->
 										robot.logger.error "csv file write error: #{writeErr}"
 										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
 									else
-										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name} saved"
-										###postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, data) ->
-											if err?
-												robot.logger.error "post file to slack fail! #{err}"
-												robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "generate file #{file_name} error"
-											else
-												jObj = JSON.parse data
-												if !jObj.ok
-													robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file post to slack fail"	
-													robot.logger.error "#{jObj.ok}, #{jObj.error}"###
+										robot.logger.info "file #{file_name} saved"
