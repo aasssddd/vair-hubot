@@ -22,6 +22,7 @@ async = require 'async'
 {postFileToSlack} = require './lib/slack-file-poster'
 {wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 {S3FileAccessHelper} = require './lib/upload-to-s3'
+{postFileToSlack} = require './lib/slack-file-poster'
 
 module.exports = (robot) ->
 
@@ -138,6 +139,10 @@ module.exports = (robot) ->
 			search_result = files.filter (file_name) ->
 				match = file_name.indexOf fileSearchPattern
 				robot.logger.info "file #{file_name} matches #{fileSearchPattern}? #{match}"
+				if match > -1
+					postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err) ->
+							if err?
+								robot.logger.error "post file to slack fail: #{err}"
 				return match > -1
 			if search_result.length >= 1
 				return SendToSita search_result[0], (err) ->
@@ -145,5 +150,7 @@ module.exports = (robot) ->
 						robot.logger.error wrapErrorMessage "#{err}"
 					else
 						robot.messageRoom  room, "file #{search_result} is sent for you"
+						
+
 
 		robot.messageRoom room, "CSV Files not found, please make sure flight number is exist, or try regenerate file you need"
