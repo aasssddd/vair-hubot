@@ -62,15 +62,15 @@ class SitaAirCarrierCSV
 			version: "***VERSION 4"
 			batch: "APP"
 			type: "P"
-			direction: "I"
 			service: "*AIRCRAFT"
 
+		direction = if "#{arrPort}" is "TPE" then "O" else "I"
 
 		data.push new SitaAirCarrierRecord opts.version, "", "", "", "", "", "", "", "", "", "", "", ""
 		data.push new SitaAirCarrierRecord "***HEADER", "", "", "", "", "", "", "", "", "", "", "", ""
 		data.push new SitaAirCarrierRecord "***BATCH", opts.batch, "", "", "", "", "", "", "", "", "", "", ""
 		data.push new SitaAirCarrierRecord "*TYPE", opts.type, "", "", "", "", "", "", "", "", "", "", ""
-		data.push new SitaAirCarrierRecord "*DIRECTION", opts.direction, "", "", "", "", "", "", "", "", "", "", ""
+		data.push new SitaAirCarrierRecord "*DIRECTION", direction, "", "", "", "", "", "", "", "", "", "", ""
 		data.push new SitaAirCarrierRecord opts.service, flightNum, "", "", "", "", "", "", "", "", "", "", ""
 		data.push new SitaAirCarrierRecord "*DEP PORT", depPort, "", "", "", "", "", "", "", "", "", "", ""
 		data.push new SitaAirCarrierRecord "*DEP DATE", depDate, "", "", "", "", "", "", "", "", "", "", ""

@@ -14,6 +14,6 @@ set HUBOT_YELP_CONSUMER_SECRET=g2HSX-m4sWabuVJW9mIf8Idw0y0
 set HUBOT_YELP_DEFAULT_LOCATION=聯合醫院中興院區
 set HUBOT_YELP_TOKEN=_gWbpcD0rgFTmXT_wlAdkSaQqOse_On9
 set HUBOT_YELP_TOKEN_SECRET=o6RkkCR_8rVRzXsoYkrAl0DR7_0
-set NODE_ENV=prod
+set NODE_ENV=local
 
 npm install && node_modules\.bin\hubot.cmd --name "pal" %*
