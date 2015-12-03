@@ -18,7 +18,7 @@ class SitaAirCarrierRecord
 	constructor: (
 		@DocumentType = "P", 
 		@Nationality = "TWN", 
-		@DocumentNumber = "00000000", 
+		@DocumentNumber = "11111111", 
 		@DocumentExpiryDate = moment("2200/12/31", "YYYY/MM/DD").format("DD-MMM-YYYY"), 
 		@IssuingState = @Nationality, 
 		@FamilyName, 
