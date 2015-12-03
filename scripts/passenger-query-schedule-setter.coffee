@@ -64,9 +64,6 @@ module.exports = (robot) ->
 						args.PassengersManifestRequest.flight_number = data.flight_no
 						args.PassengersManifestRequest.departure_date_from = moment(data.dep_date, avantik_dateformat_string).format avantik_date_req_string
 
-						# search only checked-in passenger
-						args.PassengersManifestRequest.bCheckedIn = true
-
 						getPassengerManifest args, client, (passErr, passResult) ->
 							if passErr?
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "err! #{JSON.stringify passErr}"

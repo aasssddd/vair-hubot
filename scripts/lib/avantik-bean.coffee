@@ -8,6 +8,10 @@ class AvantikInitBean
 		@strPassword = config.avantik.AVANTIK_USER_PASSWORD
 		@strAgencyCode = config.avantik.AVANTIK_AGENCY_CODE
 
+###
+	default value:
+		only show CheckedIn passengers and Infants
+###
 class PassengerManifestReq
 	constructor: () ->
 		@PassengersManifestRequest =
@@ -20,11 +24,11 @@ class PassengerManifestReq
 			# bReturnServices = ""
 			# bReturnBagTags = ""
 			# bReturnRemarks = ""
-			# bNotCheckedIn = ""
-			bCheckedIn: false
-			# bOffloaded = ""
-			# bNoShow = ""
-			# bInfants = ""
+			bNotCheckedIn: false
+			bCheckedIn: true
+			bOffloaded: false
+			bNoShow: false
+			bInfants: true
 			# bConfirmed = ""
 			# bWaitlisted = ""
 			# bCancelled = ""
