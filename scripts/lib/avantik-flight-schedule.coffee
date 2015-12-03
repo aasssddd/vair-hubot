@@ -33,7 +33,8 @@ getFlightSchedule = (data, callback) ->
 	# query schedule
 	soap.createClient schedule_api_url, (err, client) ->
 		if err?
-			errMsg = "service connect #{err}"
+			log.error "service connect error #{err}"
+			callback err
 		else
 			flight_data = []
 			async.forEachOf flights, (item, key, cb) ->

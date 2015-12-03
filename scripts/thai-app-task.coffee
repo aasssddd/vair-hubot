@@ -52,7 +52,8 @@ module.exports = (robot) ->
 
 		getFlightSchedule args, (err, res) ->
 			#run job 3 hours earlier before departure
-			job_trigger_offset_hour = config.avantik.SITA_SEND_TIME_SHIFT
+			job_trigger_offset = config.avantik.SITA_SEND_TIME_SHIFT
+			job_trigger_offset_unit = config.avantik.SITA_SEND_TIME_SHIFE_UNIT
 			if err != ""
 				robot.logger.error "Err #{err}"
 				robot.messageRoom room, wrapErrorMessage "#{err}"
@@ -74,7 +75,9 @@ module.exports = (robot) ->
 					schedule_time = data.dep_time.toString().match /.{1,2}/g
 					schedule_date.hour schedule_time[0]
 					schedule_date.minute schedule_time[1]
-					schedule_date.add job_trigger_offset_hour, 'hour'				
+					robot.logger.info "flight #{data.flight_no} will departure at #{schedule_date.toDate()}"
+					schedule_date.add job_trigger_offset, "#{job_trigger_offset_unit}"
+					robot.logger.info "flight #{data.flight_no} data will be sent at #{schedule_date.toDate()}"
 
 					# set passenger query jobs
 					thaiAppScheduleCoordinator.addPassengerQueryJob data.flight_no, ((obj) ->
