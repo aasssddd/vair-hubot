@@ -50,7 +50,7 @@ checkAndWaitFileGenerate = (file_name, timeout, callback) ->
 			log.info "file status: #{JSON.stringify stat}"
 			callback null
 	catch 
-		log.warning "file #{file_name} not exist yet, wait for 5 mins and retry"
+		log.warning "file #{file_name} not exist yet, wait for 30 seconds and retry"
 		setTimeout ()->
 			checkAndWaitFileGenerate file_name, (timeout - 30), callback
 		, 30000

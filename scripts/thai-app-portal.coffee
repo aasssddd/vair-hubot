@@ -15,9 +15,11 @@
 moment = require 'moment'
 string = require 'string'
 tosource = require 'tosource'
+config = require 'app-config'
 {SendToSita} = require './lib/sita-sender'
+{postFileToSlack} = require './lib/slack-file-poster'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
-{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping} = require './thai-app-utils'
+{wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 
 module.exports = (robot) ->
 
@@ -49,8 +51,8 @@ module.exports = (robot) ->
 	###
 	robot.respond /generate sita data on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
 		args = 
-		flight: res.match[1]
-		fdate: moment(res.match[2], "YYYY/MM/DD").format("YYYYMMDD")
+			flight: res.match[1]
+			fdate: moment(res.match[2], "YYYY/MM/DD").format("YYYYMMDD")
 		robot.logger.info "starting to resend data of #{JSON.stringify args}"
 
 		getFlightSchedule args, (err, sch_res) ->
@@ -70,5 +72,17 @@ module.exports = (robot) ->
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
 					robot.logger.info "query passenger information with parameters: #{tosource data}"
 					robot.emit 'sendPassengerInfo', data
-					
+
+				file_name = getSitaFileName args.flight, args.fdate
+			
+				checkAndWaitFileGenerate file_name, 600, (err) ->
+					if err?
+						robot.logger.error "file not generate #{err}"
+						res.send "file not generate! #{err}"
+					else
+						postFileToSlack (getSitaFileName args.flight, args.fdate), config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
+							if err?
+								res.send "get flight data error: #{err}"
+							else
+								robot.logger.info "post file to slack successful #{body}"
 
