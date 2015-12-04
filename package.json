@@ -1,6 +1,6 @@
 {
   "name": "pal",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "private": true,
   "author": "William Chen <william.chen@vair.com.tw>",
   "description": "a robot for vair general purpose",
