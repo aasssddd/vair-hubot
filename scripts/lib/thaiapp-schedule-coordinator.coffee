@@ -8,6 +8,7 @@ use for manage schedule job
 schedule = require "node-schedule"
 config = require 'app-config'
 tosource = require 'tosource'
+moment = require 'moment-timezone'
 
 
 class thaiAppScheduleCoordinator
@@ -95,12 +96,26 @@ class thaiAppScheduleCoordinator
 		return list of passenger manifest query jobs
 	###
 	@listCurrentPassengerQueryJobs: () ->
-		return @passengerQueryJobs
+		result = []
+		log.info "TZ is #{process.env.TZ}"
+		for key, value of @passengerQueryJobs
+			for k, v of value
+				nextTrigger = moment(v.nextInvocation()).tz("Asia/Taipei").format()
+				result.push {"#{k}": nextTrigger}
+
+		return result
 
 	###
 		return list of sita schedule jobs
 	###
 	@listCurrentSitaScheduleJobs: () ->
-		return @sitaScheduleJobs
+		result = []
+		log.info "TZ is #{process.env.TZ}"
+		for key, value of @sitaScheduleJobs
+			for k, v of value
+				nextTrigger = moment(v.nextInvocation()).tz("Asia/Taipei").format()
+				result.push {"#{k}": nextTrigger}
+
+		return result
 
 module.exports.thaiAppScheduleCoordinator = thaiAppScheduleCoordinator
