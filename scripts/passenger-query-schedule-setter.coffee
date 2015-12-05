@@ -100,13 +100,12 @@ module.exports = (robot) ->
 							csvGenerator = new SitaAirCarrierCSV flight_num, flightInfo.origin_rcd, depDate, depTime, flightInfo.destination_rcd, arrDate, arrTime
 
 							# put passenger data
-							robot.logger.info "original passenger data: #{flightInfo.Passenger.length}"
 							passengerData = []
-							flightInfo.Passenger.forEach (item) ->
-								if passengerData.indexOf item <= -1
-									passengerData.push item
+							if flightInfo.Passenger?
+								flightInfo.Passenger.forEach (item) ->
+									if passengerData.indexOf item <= -1
+										passengerData.push item
 
-							robot.logger.info "filtered passenger data: #{passengerData.length}"
 							
 							async.forEachOf passengerData, (item, key, cb) ->
 								robot.logger.debug "passenger: #{JSON.stringify item}"
