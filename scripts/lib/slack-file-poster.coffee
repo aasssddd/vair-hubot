@@ -12,25 +12,28 @@ config = require 'app-config'
 async = require 'async'
 request = require 'request'
 tosource = require 'tosource'
+path = require 'path'
 
 postFileToSlack = (fileName, channel, callback)->
 	slackFileUploadEndpoint = "https://slack.com/api/files.upload"
-	filePath = config.avantik.SITA_CSV_FILE_PATH
+	filePath = path.resolve config.avantik.SITA_CSV_FILE_PATH, fileName
+	log.info "file path is #{filePath}"
 
 	form = 
 		"token": config.avantik.SLACK_FILE_UPLOAD_TOKEN
-		"file": fs.createReadStream filePath + fileName
+		"file": fs.createReadStream filePath
 		"channels": "#{channel}"
 
-	log.debug "upload contenttoken: #{config.avantik.SLACK_FILE_UPLOAD_TOKEN} #{filePath + fileName} #{channel}"
-
-	request.post { url: slackFileUploadEndpoint, formData: form }, (err, httpResp, body) ->
-		if err?
-			log.error "http post error: #{err}"
-			callback err, null
-		else
-			log.debug "slack file upload result json #{JSON.stringify body}"
-			callback null, body
+	setTimeout () ->
+		log.debug "upload file: #{filePath} to channel #{form.channels}"
+		request.post { url: slackFileUploadEndpoint, formData: form }, (err, httpResp, body) ->
+			if err?
+				log.error "http post error: #{err}"
+				callback err, null
+			else
+				log.debug "slack file upload result json #{JSON.stringify body}"
+				callback null, body
+	, 500
 
 
 module.exports.postFileToSlack = postFileToSlack

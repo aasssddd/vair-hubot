@@ -26,14 +26,15 @@ module.exports = (robot) ->
 	###
 		list all schedule
 	###
-	robot.respond /list all sita schedule/i, () ->
+	robot.respond /list all sita schedule/i, (res) ->
 		robot.emit 'listAllSchedule'
 
 	###
 		reset all schedule
 	###
-	robot.respond /restart sita schedule/i, () ->
+	robot.respond /restart sita schedule/i, (res) ->
 		robot.emit 'retriveSchedule'
+		res.reply "Aye Sir, you can check sita schedule next invocation time now"
 
 	robot.respond /clean everything about SITA/i, (res)->
 		sitaScheduleHouseKeeping()
@@ -50,6 +51,7 @@ module.exports = (robot) ->
 		resend file to sita
 	###
 	robot.respond /generate sita data on flight\s*(.*)? at *\s*(.*)?/i, (res) ->
+		res.reply "Aye Sir! Please wait one minute"
 		args = 
 			flight: res.match[1]
 			fdate: moment(res.match[2], "YYYY/MM/DD").format("YYYYMMDD")
@@ -71,20 +73,14 @@ module.exports = (robot) ->
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
 					robot.logger.info "query passenger information with parameters: #{tosource data}"
-					robot.emit 'sendPassengerInfo', data
-
-				setTimeout () ->
-					file_name = getSitaFileName args.flight, args.fdate
-				
-					checkAndWaitFileGenerate file_name, 600, (err) ->
+					robot.emit 'sendPassengerInfo', data, (err) ->
 						if err?
-							robot.logger.error "file not generate #{err}"
-							res.send "file not generate! #{err}"
+							robot.AVANTIK_MESSAGE_ROOM avantik.AVANTIK_MESSAGE_ROOM "create sita file error: #{err}"
 						else
-							postFileToSlack (getSitaFileName args.flight, args.fdate), config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
+							file_name = getSitaFileName args.flight, args.fdate
+
+							postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
 								if err?
 									res.send "get flight data error: #{err}"
 								else
 									robot.logger.info "post file to slack successful #{body}"
-				, 30000
-

@@ -24,7 +24,7 @@ module.exports = (robot) ->
 			arr_date: YYYYMMDD
 			arr_time: HHMM
 	###
-	robot.on 'sendPassengerInfo', (data) ->
+	robot.on 'sendPassengerInfo', (data, cb) ->
 
 		robot.logger.info "query passenger info of flight #{data.flight_no}"
 		robot.logger.debug "query passenger info with parameters: #{tosource data}"
@@ -133,3 +133,5 @@ module.exports = (robot) ->
 										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
 									else
 										robot.logger.info "file #{file_name} saved"
+
+									cb writeErr
