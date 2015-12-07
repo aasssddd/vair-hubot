@@ -73,16 +73,18 @@ module.exports = (robot) ->
 					robot.logger.info "query passenger information with parameters: #{tosource data}"
 					robot.emit 'sendPassengerInfo', data
 
-				file_name = getSitaFileName args.flight, args.fdate
-			
-				checkAndWaitFileGenerate file_name, 600, (err) ->
-					if err?
-						robot.logger.error "file not generate #{err}"
-						res.send "file not generate! #{err}"
-					else
-						postFileToSlack (getSitaFileName args.flight, args.fdate), config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
-							if err?
-								res.send "get flight data error: #{err}"
-							else
-								robot.logger.info "post file to slack successful #{body}"
+				setTimeout () ->
+					file_name = getSitaFileName args.flight, args.fdate
+				
+					checkAndWaitFileGenerate file_name, 600, (err) ->
+						if err?
+							robot.logger.error "file not generate #{err}"
+							res.send "file not generate! #{err}"
+						else
+							postFileToSlack (getSitaFileName args.flight, args.fdate), config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
+								if err?
+									res.send "get flight data error: #{err}"
+								else
+									robot.logger.info "post file to slack successful #{body}"
+				, 30000
 

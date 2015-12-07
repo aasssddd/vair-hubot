@@ -17,7 +17,6 @@ postFileToSlack = (fileName, channel, callback)->
 	slackFileUploadEndpoint = "https://slack.com/api/files.upload"
 	filePath = config.avantik.SITA_CSV_FILE_PATH
 
-
 	form = 
 		"token": config.avantik.SLACK_FILE_UPLOAD_TOKEN
 		"file": fs.createReadStream filePath + fileName
