@@ -4,6 +4,7 @@
 moment = require 'moment'
 fs = require 'fs'
 config = require 'app-config'
+tosource = require 'tosource'
 {log} = require './lib/vair-logger'
 rimraf = require 'rimraf'
 mkdirp = require 'mkdirp'
@@ -13,11 +14,13 @@ wrapErrorMessage = (msg) ->
 	return "Oops! Send passenger manifest to SITA fail! Error Reason:#{msg}"
 
 
-getSitaFileName = (flight_no, dep_date) ->
+getSitaFileName = (flight_no, dep_date, postfix) ->
 	partial_file_name_format = "yyyymmdd"
 	avantik_dateformat_string = "YYYYMMDD"	
 	depDateOri = moment(dep_date, avantik_dateformat_string).toDate()
-	return "ZV#{flight_no}#{dateFormat depDateOri, partial_file_name_format}.csv"
+	file_name_postfix = if postfix? then postfix else ""
+
+	return "ZV#{flight_no}#{dateFormat depDateOri, partial_file_name_format}#{file_name_postfix}.csv"
 
 sitaScheduleHouseKeeping = () ->
 	# reset job queue
@@ -40,19 +43,34 @@ sitaScheduleHouseKeeping = () ->
 ###
 	wait for file appear
 ###
-checkAndWaitFileGenerate = (file_name, timeout, callback) ->
-	path = config.avantik.SITA_CSV_FILE_PATH
+checkAndWaitFileGenerate = (pattern, timeout, callback) ->
+
 	if timeout <= 0
 		callback "file not exist"
 	try 
-		stat = fs.statSync path + file_name
-		if stat?
-			log.info "file status: #{JSON.stringify stat}"
-			callback null
-	catch 
-		log.warning "file #{file_name} not exist yet, wait for 30 seconds and retry"
+		files = fs.readdirSync config.avantik.SITA_CSV_FILE_PATH
+		search_result = []
+		if files?
+			
+			search_result = files.filter (file_name) ->
+				match = file_name.indexOf pattern
+				log.debug "check if #{file_name} matches #{pattern} ? #{match > -1}"
+				return match > -1
+
+			log.debug "file exist? #{search_result.length > 0}"
+
+			if search_result.length > 0
+				return callback null
+
+		log.warning "file not exist, wait for 30 seconds and retry"
+		setTimeout () ->
+			checkAndWaitFileGenerate pattern, (timeout - 30), callback
+		, 30000
+
+	catch ex
+		log.warning "directory not exist yet, wait for 30 seconds and retry"
 		setTimeout ()->
-			checkAndWaitFileGenerate file_name, (timeout - 30), callback
+			checkAndWaitFileGenerate pattern, (timeout - 30), callback
 		, 30000
 
 

@@ -97,7 +97,6 @@ class thaiAppScheduleCoordinator
 	###
 	@listCurrentPassengerQueryJobs: () ->
 		result = []
-		log.info "TZ is #{process.env.TZ}"
 		for key, value of @passengerQueryJobs
 			for k, v of value
 				nextTrigger = moment(v.nextInvocation()).tz("Asia/Taipei").format()

@@ -74,14 +74,14 @@ module.exports = (robot) ->
 
 							# convert into SITA file format
 							if !passResult.root?
-								robot.logger.info "no data result message is: #{tosource passResult}"
+								robot.logger.debug "no data result message is: #{tosource passResult}"
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no passenger data found on flight #{data.flight_no} at #{data.dep_date}"
 								return
 
 							flightInfo = passResult.root.Flight[0]
 
 							if !flightInfo
-								robot.logger.info "no data result message is: #{tosource passResult}"
+								robot.logger.debug "no data result message is: #{tosource passResult}"
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no flight found"
 								return
 							
@@ -97,7 +97,7 @@ module.exports = (robot) ->
 							arrDate = dateFormat arrDateOri, sita_date_format_string
 							arrTime = data.arr_time
 							flight_num = flightInfo.airline_rcd + flightInfo.flight_number
-							csvGenerator = new SitaAirCarrierCSV flight_num, flightInfo.origin_rcd, depDate, depTime, flightInfo.destination_rcd, arrDate, arrTime
+							
 
 							# put passenger data
 							passengerData = []
@@ -106,32 +106,56 @@ module.exports = (robot) ->
 									if passengerData.indexOf item <= -1
 										passengerData.push item
 
-							
-							async.forEachOf passengerData, (item, key, cb) ->
-								robot.logger.debug "passenger: #{JSON.stringify item}"
-								passport_expiry_string = null
-								birthday_string = ""
-								if item.passport_expiry_date?
-									passport_expiry_string = dateFormat (new Date item.passport_expiry_date), sita_date_format_string
-								if item.date_of_birth?
-									birthday_string = dateFormat (new Date item.date_of_birth), sita_date_format_string								
-								nationality_iso3 = null
-								if item.nationality_rcd? && item.nationality_rcd != undefined
-									nationality_iso3 = lookup.byIso(item.nationality_rcd[0]).iso3
+							max_records_of_file_part = 80
 
-								csvGenerator.add new SitaAirCarrierRecord "P", nationality_iso3, item.passport_number, passport_expiry_string, nationality_iso3, item.lastname, item.firstname,	birthday_string, item.gender_type_rcd, nationality_iso3, travel_type, null, null
-								cb()
-							, () ->
-								#generate file name
-								file_name = getSitaFileName data.flight_no, data.dep_date
+							if passengerData.length > 0
+								file_split = passengerData.length // max_records_of_file_part + (if passengerData.length % max_records_of_file_part > 0 then 1 else 0)
+								file_part = []
 
-								# save csv file
-								robot.logger.debug "starting generate target file #{file_name}"
-								csvGenerator.commit file_name, (writeErr) ->
-									if writeErr?
-										robot.logger.error "csv file write error: #{writeErr}"
-										robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
-									else
-										robot.logger.info "file #{file_name} saved"
 
-									cb writeErr
+								# slice passenger data by max record count
+								for cnt in [0..file_split-1]
+									startIndex = cnt * max_records_of_file_part
+									endIndex = if startIndex + max_records_of_file_part > passengerData then passengerData.length - 1 else startIndex + max_records_of_file_part - 1
+									file_part.push passengerData[startIndex..endIndex]
+
+
+								# generate file
+								file_part.forEach (pnrs, index) ->
+									csvGenerator = new SitaAirCarrierCSV flight_num, flightInfo.origin_rcd, depDate, depTime, flightInfo.destination_rcd, arrDate, arrTime
+
+									pnrs.forEach (pnr) ->
+										robot.logger.debug "passenger: #{JSON.stringify pnr}"
+										passport_expiry_string = null
+										birthday_string = ""
+										if pnr.passport_expiry_date?
+											passport_expiry_string = dateFormat (new Date pnr.passport_expiry_date), sita_date_format_string
+										if pnr.date_of_birth?
+											birthday_string = dateFormat (new Date pnr.date_of_birth), sita_date_format_string								
+										nationality_iso3 = null
+										if pnr.nationality_rcd? && pnr.nationality_rcd != undefined
+											nationality_iso3 = lookup.byIso(pnr.nationality_rcd[0]).iso3
+
+										csvGenerator.add new SitaAirCarrierRecord "P", nationality_iso3, pnr.passport_number, passport_expiry_string, nationality_iso3, pnr.lastname, pnr.firstname,	birthday_string, pnr.gender_type_rcd, nationality_iso3, travel_type, null, null
+
+									#generate file name
+									file_part_postfix = if file_part.length is 1 then "" else "_part#{index}"
+
+									file_name = getSitaFileName data.flight_no, data.dep_date, file_part_postfix
+
+									# save csv file
+									robot.logger.debug "starting generate target file #{file_name}"
+									csvGenerator.commit file_name, (writeErr) ->
+										if writeErr?
+											robot.logger.error "csv file write error: #{writeErr}"
+											robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
+											if cb?
+												return cb writeErr
+										else
+											robot.logger.info "file #{file_name} saved"
+									
+								if cb?
+									return cb()
+
+										
+								

@@ -87,29 +87,6 @@ class SitaAirCarrierCSV
 	add: (record) ->
 		@data.push record
 
-	###
-		file name: target file name
-		callback: err
-	###
-	commit_2: (fileName, callback) ->
-
-		@data.push new SitaAirCarrierRecord("***END")
-
-		csvStream = csv.createWriteStream {headers: true}
-		csvStream.on "finish", () ->
-			log.debug "file saved!"
-			data = []
-			callback()
-		csvStream.on "error", ()->
-			callback "CSV File Write Error", null
-
-		writableStream = fs.createWriteStream filePath + fileName
-		csvStream.pipe writableStream
-
-		@data.forEach (item) ->
-			csvStream.write item
-		csvStream.end()		
-	
 
 	commit: (fileName, callback) ->
 
