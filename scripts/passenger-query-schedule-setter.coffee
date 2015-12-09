@@ -73,7 +73,7 @@ module.exports = (robot) ->
 								robot.logger.debug "response: #{client.lastResponse}"
 
 							# convert into SITA file format
-							if !passResult.root?
+							if !passResult? && !passResult.root?
 								robot.logger.debug "no data result message is: #{tosource passResult}"
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no passenger data found on flight #{data.flight_no} at #{data.dep_date}"
 								return
@@ -106,7 +106,7 @@ module.exports = (robot) ->
 									if passengerData.indexOf item <= -1
 										passengerData.push item
 
-							max_records_of_file_part = 80
+							max_records_of_file_part = config.avantik.MAX_RECORD_COUNT_PER_FILE
 
 							if passengerData.length > 0
 								file_split = passengerData.length // max_records_of_file_part + (if passengerData.length % max_records_of_file_part > 0 then 1 else 0)
