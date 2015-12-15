@@ -1,6 +1,6 @@
 {
   "name": "pal",
-  "version": "0.9.8",
+  "version": "1.0.0",
   "private": true,
   "author": "William Chen <william.chen@vair.com.tw>",
   "description": "a robot for vair general purpose",
@@ -44,6 +44,7 @@
     "rimraf": "^2.4.4",
     "soap": "^0.11.0",
     "soap-cookie": "^0.10.1",
+    "ssh2": "^0.4.12",
     "string": "^3.3.1",
     "tosource": "^1.0.0",
     "xml2js": "^0.4.13",

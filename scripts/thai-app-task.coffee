@@ -22,7 +22,6 @@ async = require 'async'
 {postFileToSlack} = require './lib/slack-file-poster'
 {wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 {S3FileAccessHelper} = require './lib/upload-to-s3'
-{postFileToSlack} = require './lib/slack-file-poster'
 
 module.exports = (robot) ->
 

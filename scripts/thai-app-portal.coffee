@@ -17,7 +17,9 @@ string = require 'string'
 tosource = require 'tosource'
 config = require 'app-config'
 fs = require 'fs'
+async = require 'async'
 {postFileToSlack} = require './lib/slack-file-poster'
+{SendToSita} = require './lib/sita-sender'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
 {wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 
@@ -74,10 +76,10 @@ module.exports = (robot) ->
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
 					robot.logger.info "query passenger information with parameters: #{tosource data}"
+					
 					robot.emit 'sendPassengerInfo', data, (err) ->
-
 						if err?
-							robot.AVANTIK_MESSAGE_ROOM avantik.AVANTIK_MESSAGE_ROOM "create sita file error: #{err}"
+							res.reply "create sita file error: #{err}"
 						else
 							pattern = "ZV#{args.flight}#{args.fdate}"
 
@@ -88,12 +90,20 @@ module.exports = (robot) ->
 									match = file_name.indexOf pattern
 									if match > -1
 										robot.logger.info "file #{file_name} matches #{pattern}"
-										postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err) ->
+									return match > -1
+								if search_result.length >= 1
+									search_result.forEach (fileObj) ->
+										robot.logger.info "starting send ftp file"
+										SendToSita fileObj, (err) ->
 											if err?
-												robot.logger.error "post file to slack fail: #{err}"
-												res.reply "post file to slack fail #{err}"
-									
-							else
-								res.reply "directory not exist"
-
-						res.reply "done!"
+												robot.logger.error wrapErrorMessage "#{err}"
+												res.reply "send file to SITA error, maybe something broken, pls try later or send manually"
+											else
+												res.reply "file #{fileObj} has sent to sita"
+												postFileToSlack fileObj, config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
+													if err?
+														robot.logger.error "post file to slack fail: #{err}"
+														res.reply "post file to slack fail #{err}"
+													else
+														robot.logger.info "file posted to slack"
+														robot.logger.info "slack post result: #{body}"
