@@ -26,7 +26,6 @@ module.exports = (robot) ->
 					else if "000" not in initResult.error.code
 						res.reply "Not OK, #{initResult.error.code} #{initResult.error.message}"
 					else
-
 						robot.logger.debug "request: #{client.lastRequest}"
 						robot.logger.debug "response: #{client.lastResponse}"
 						res.reply "Init OK, #{initResult.error.code} #{initResult.error.message}"
