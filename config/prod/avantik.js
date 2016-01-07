@@ -5,7 +5,7 @@ module.exports = {
 	AVANTIK_FLIGHT_ENDPOINT: "http://vair.avantik.io/FlightsWebservice/FlightsService.asmx?WSDL",
 	AVANTIK_USER_ACCOUNT: "softmobile",
 	AVANTIK_USER_PASSWORD: "softmobile1234",
-	AVANTIK_QUERY_FLIGHT: "006;008;010",
+	AVANTIK_QUERY_FLIGHT: "006;008",
 	SITA_CSV_FILE_PATH: "./temp/",
 	AVANTIK_MESSAGE_ROOM: "#william_test_hubot",
 	SLACK_FILE_UPLOAD_TOKEN: "xoxp-4861959806-11435105106-15208321431-584424075c",

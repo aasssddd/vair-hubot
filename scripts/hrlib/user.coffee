@@ -34,9 +34,9 @@ module.exports.GetUserData = (criteria, callback)->
 			return callback err
 		
 		client.BOExpData param, (callErr, data) ->
-			log.info "Request Header: #{JSON.stringify client.lastRequestHeaders}"
-			log.info "Request Body: #{client.lastRequest}"
-			log.info "Response Body #{client.lastResponse}"
+			log.debug "Request Header: #{JSON.stringify client.lastRequestHeaders}"
+			log.debug "Request Body: #{client.lastRequest}"
+			log.debug "Response Body #{client.lastResponse}"
 			if callErr?
 				log.error "#{callErr}"
 				return callback callErr
@@ -66,5 +66,5 @@ module.exports.GetUserData = (criteria, callback)->
 						resultSet = resultSet.filter (obj) ->
 							match = obj.E_MAIL_H[0].toLowerCase().indexOf options.emp_email.toLowerCase()
 							return match > -1
-					log.debug "filtered result: \n#{tosource resultSet}"
+					log.info "filtered result: \n#{tosource resultSet}"
 					callback null, resultSet
