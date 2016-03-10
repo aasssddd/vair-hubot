@@ -62,7 +62,7 @@ class SitaAirCarrierCSV
 			version: "***VERSION 4"
 			batch: "APP"
 			type: "P"
-			service: "*AIRCRAFT"
+			service: "*FLIGHT"
 
 		direction = if "#{arrPort}" is "TPE" then "O" else "I"
 
