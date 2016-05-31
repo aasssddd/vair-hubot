@@ -18,12 +18,15 @@ module.exports = (robot) ->
 				res.reply "Err! #{err}"
 
 			serviceInitialize client, initReq, (err, soapResult) ->
+				robot.logger.debug "request: #{client.lastRequest}"
+				robot.logger.debug "response: #{client.lastResponse}"
+				robot.logger.debug "response header: #{JSON.stringify client.lastResponseHeaders}"
 				if err?
 					res.reply "Err: #{err}"
 				else 
-					console.log JSON.stringify soapResult, null, 41
+					robot.logger.debug JSON.stringify soapResult, null, 41
 					if "000" in soapResult.error.code
-						console.log "OK, #{soapResult.error.message}"
+						robot.logger.debug "OK, #{soapResult.error.message}"
 					else
 						res.reply "Not OK, #{soapResult.error.code} #{soapResult.error.message}"
 
@@ -32,9 +35,6 @@ serviceInitialize = (client, req, callback) ->
 
 	client.ServiceInitialize req, (err, result) ->
 		if err?
-			console.log "request: #{client.lastRequest}"
-			console.log "response: #{client.lastResponse}"
-			console.log "response header: #{JSON.stringify client.lastResponseHeaders}"
 			callback err, result
 		else
 			parseString result.ServiceInitializeResult, (err, parseResult) ->

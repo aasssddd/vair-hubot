@@ -102,7 +102,7 @@ module.exports = (robot) ->
 										SendToSita f_name, (err) ->
 											if err?
 												robot.logger.error "fail sending file to sita"
-												robot.messageRoom room, wrapErrorMessage "fail sending file to sita"
+												robot.messageRoom room, wrapErrorMessage "fail sending file to sita: #{err}"
 											else
 												robot.messageRoom room, "file #{f_name} has sent to SITA"
 
