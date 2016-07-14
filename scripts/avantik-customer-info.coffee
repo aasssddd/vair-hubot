@@ -12,8 +12,10 @@ Cookie = require 'soap-cookie'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
 {serviceInitialize} = require './avantik-service-init'
 fs = require 'fs'
+Logger = require('vair_log').Logger
 
 module.exports = (robot) ->
+	log = Logger.getLogger()
 	robot.respond /avantik get passenger manifest of flight\s*(.*)? at\s*(.*)$/i, (res) ->
 		initBean = new AvantikInitBean()
 		soap.createClient initBean.url, (err, client) ->
@@ -26,11 +28,11 @@ module.exports = (robot) ->
 					else if "000" not in initResult.error.code
 						res.reply "Not OK, #{initResult.error.code} #{initResult.error.message}"
 					else
-						robot.logger.debug "request: #{client.lastRequest}"
-						robot.logger.debug "response: #{client.lastResponse}"
+						log.debug "request: #{client.lastRequest}"
+						log.debug "response: #{client.lastResponse}"
 						res.reply "Init OK, #{initResult.error.code} #{initResult.error.message}"
 						cookie = new Cookie(client.lastResponseHeaders)
-						robot.logger.debug "Cookie: #{JSON.stringify cookie}"
+						log.debug "Cookie: #{JSON.stringify cookie}"
 						client.setSecurity(cookie)
 						args = new PassengerManifestReq()
 						args.PassengersManifestRequest.airline_rcd = "ZV"
@@ -40,12 +42,12 @@ module.exports = (robot) ->
 							if passErr?
 								res.reply "err! #{JSON.stringify passErr}"
 							else
-								robot.logger.debug "request header: #{JSON.stringify client.lastRequestHeaders}"
-								robot.logger.debug "request: #{client.lastRequest}"
-								robot.logger.debug "response: #{client.lastResponse}"
+								log.debug "request header: #{JSON.stringify client.lastRequestHeaders}"
+								log.debug "request: #{client.lastRequest}"
+								log.debug "response: #{client.lastResponse}"
 							fs.writeFile "avantik.log", JSON.stringify(passResult, null, 4), 'utf8', (werr) ->
 							if werr?
-								robot.logger.error "write err"
+								log.error "write err"
 								res.reply "#{JSON.stringify passResult, null, 4}"
 
 getPassengerManifest = (args, client, callback) ->

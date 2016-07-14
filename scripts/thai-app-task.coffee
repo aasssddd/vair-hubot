@@ -22,9 +22,10 @@ async = require 'async'
 {postFileToSlack} = require './lib/slack-file-poster'
 {wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
 {S3FileAccessHelper} = require './lib/upload-to-s3'
+Logger = require('vair_log').Logger
 
 module.exports = (robot) ->
-
+	log = Logger.getLogger()
 	robot.on 'listAllSchedule', ()->
 		room = config.avantik.AVANTIK_MESSAGE_ROOM
 		robot.messageRoom room, "passenger schedule: #{JSON.stringify thaiAppScheduleCoordinator.listCurrentPassengerQueryJobs()}"
@@ -47,14 +48,14 @@ module.exports = (robot) ->
 		args = 
 			fdate: qry_date
 
-		robot.logger.info "retriveSchedule with params #{qry_date}"
+		log.info "retriveSchedule with params #{qry_date}"
 
 		getFlightSchedule args, (err, res) ->
 			#run job 3 hours earlier before departure
 			job_trigger_offset = config.avantik.SITA_SEND_TIME_SHIFT
 			job_trigger_offset_unit = config.avantik.SITA_SEND_TIME_SHIFE_UNIT
 			if err != ""
-				robot.logger.error "Err #{err}"
+				log.error "Err #{err}"
 				robot.messageRoom room, wrapErrorMessage "#{err}"
 			else
 				# set schedule task 
@@ -67,16 +68,16 @@ module.exports = (robot) ->
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
 
-					robot.logger.debug "JOB Request data is: #{tosource data}"
+					log.debug "JOB Request data is: #{tosource data}"
 
 					# set sechedule
 					schedule_date = moment data.dep_date.split(" ")[0], "YYYYMMDD"
 					schedule_time = data.dep_time.toString().match /.{1,2}/g
 					schedule_date.hour schedule_time[0]
 					schedule_date.minute schedule_time[1]
-					robot.logger.info "flight #{data.flight_no} will departure at #{schedule_date.toDate()}"
+					log.info "flight #{data.flight_no} will departure at #{schedule_date.toDate()}"
 					schedule_date.add job_trigger_offset, "#{job_trigger_offset_unit}"
-					robot.logger.info "flight #{data.flight_no} data will be sent at #{schedule_date.toDate()}"
+					log.info "flight #{data.flight_no} data will be sent at #{schedule_date.toDate()}"
 
 					# set passenger query jobs
 					thaiAppScheduleCoordinator.addPassengerQueryJob data.flight_no, ((obj) ->
@@ -92,7 +93,7 @@ module.exports = (robot) ->
 						retry_file_test = config.avantik.SITA_FILE_CHECK_TIMEOUT_SECOND
 						checkAndWaitFileGenerate pattern, retry_file_test, (err) ->
 							if err?
-								robot.logger.warning "file #{pattern} not found for #{retry_file_test} seconds, maybe there is no data found for #{obj.flight_no}"
+								log.warn "file #{pattern} not found for #{retry_file_test} seconds, maybe there is no data found for #{obj.flight_no}"
 								robot.messageRoom room, "Attention! Flight number: #{obj.flight_no} does not contains any passenger data"
 							else
 								files = fs.readdirSync config.avantik.SITA_CSV_FILE_PATH
@@ -101,36 +102,36 @@ module.exports = (robot) ->
 									if match > -1
 										SendToSita f_name, (err) ->
 											if err?
-												robot.logger.error "fail sending file to sita"
+												log.error "fail sending file to sita"
 												robot.messageRoom room, wrapErrorMessage "fail sending file to sita: #{err}"
 											else
 												robot.messageRoom room, "file #{f_name} has sent to SITA"
 
 										# upload to S3	
-										robot.logger.info "starting upload file #{f_name} to s3"
+										log.info "starting upload file #{f_name} to s3"
 										
 										S3FileAccessHelper.UploadFile f_name, (s3Err, result) ->
 											if err?
-												robot.logger.error "file #{f_name} upload to S3 fail"
+												log.error "file #{f_name} upload to S3 fail"
 												robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "file upload to s3 error: #{s3Err}"
 											else
-												robot.logger.info "file #{f_name} uploaded to S3"
+												log.info "file #{f_name} uploaded to S3"
 
 										# POST file to Slack Channel
 										postFileToSlack f_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err, resp) ->
 											if err?
-												robot.logger.error "send file to message channel fail: #{err}"
+												log.error "send file to message channel fail: #{err}"
 											else
-												robot.logger.debug "send file result #{tosource resp}"
-												robot.logger.info "send file #{f_name} to slack successful"
+												log.debug "send file result #{tosource resp}"
+												log.info "send file #{f_name} to slack successful"
 
 							# un-register SITA job 
 							thaiAppScheduleCoordinator.cancelSitaScheduleJob obj.flight_no
-							robot.logger.info "unbind sita task of #{obj.flight_no}"
+							log.info "unbind sita task of #{obj.flight_no}"
 
 							#un-register avantik job
 							thaiAppScheduleCoordinator.cancelPassengerQueryJob obj.flight_no
-							robot.logger.info "unbind task of #{obj.flight_no}"
+							log.info "unbind task of #{obj.flight_no}"
 
 						).bind null, data
 
@@ -144,16 +145,16 @@ module.exports = (robot) ->
 			fileSearchPattern = "ZV#{flight_no}#{date_part}"
 			search_result = files.filter (file_name) ->
 				match = file_name.indexOf fileSearchPattern
-				robot.logger.info "file #{file_name} matches #{fileSearchPattern}? #{match}"
+				log.info "file #{file_name} matches #{fileSearchPattern}? #{match}"
 				if match > -1
 					postFileToSlack file_name, config.avantik.AVANTIK_MESSAGE_ROOM, (err) ->
 							if err?
-								robot.logger.error "post file to slack fail: #{err}"
+								log.error "post file to slack fail: #{err}"
 				return match > -1
 			if search_result.length >= 1
 				return search_result.forEach (fileObj) ->
 					SendToSita fileObj, (err) ->
 						if err?
-							robot.logger.error wrapErrorMessage "#{err}"
+							log.error wrapErrorMessage "#{err}"
 			
 		robot.messageRoom room, "CSV Files not found, please make sure flight number is exist, or try regenerate file you need"

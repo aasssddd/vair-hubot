@@ -4,9 +4,10 @@ request = require 'request'
 config = require 'app-config'
 {parseString} = require 'xml2js'
 tosource = require 'tosource'
-{log} = require './vair-logger'
+Logger = require('vair_log').Logger
 
 module.exports.GetCrewManifest = (flight_no, date, callback) ->
+	log = Logger.getLogger()
 	form = 
 		user: config.arrangement.USER
 		flight_no: flight_no

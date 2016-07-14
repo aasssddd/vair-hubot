@@ -4,12 +4,13 @@
 use for manage schedule job
 ###
 
-{log} = require "./vair-logger"
+Logger = require('vair_log').Logger
 schedule = require "node-schedule"
 config = require 'app-config'
 tosource = require 'tosource'
 moment = require 'moment-timezone'
 
+log = Logger.getLogger()
 
 class thaiAppScheduleCoordinator
 	###
@@ -42,7 +43,7 @@ class thaiAppScheduleCoordinator
 		return true /false
 	###
 	@cancelSitaScheduleJob: (flight_no) ->
-		log.warning "canceling sita schedule job of flight #{flight_no}"
+		log.warn "canceling sita schedule job of flight #{flight_no}"
 		job = @sitaScheduleJobs.filter (item) ->
 			item[flight_no]
 		if job? && job[0]?
@@ -59,7 +60,7 @@ class thaiAppScheduleCoordinator
 		return true / false
 	###
 	@cancelPassengerQueryJob: (flight_no) ->
-		log.warning "canceling passenger query job of flight #{flight_no}"
+		log.warn "canceling passenger query job of flight #{flight_no}"
 		job = @passengerQueryJobs.filter (item) ->
 			item[flight_no]
 

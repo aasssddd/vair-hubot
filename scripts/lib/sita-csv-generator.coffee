@@ -3,12 +3,13 @@
 csv = require "fast-csv"
 fs = require 'fs'
 async = require 'async'
-{log} = require './vair-logger'
+Logger = require('vair_log').Logger
 tosource = require 'tosource'
 config = require 'app-config'
 csvWriter = require 'csv-write-stream'
 moment = require 'moment'
 
+log = Logger.getLogger()
 
 ###
 	record for generate SitaAirCarrierCSV 

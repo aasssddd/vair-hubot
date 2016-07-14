@@ -8,6 +8,7 @@ dateFormat = require 'dateformat'
 async = require 'async'
 config = require 'app-config'
 lookup = require 'country-code-lookup'
+Logger = require('vair_log').Logger
 {serviceInitialize} = require './avantik-service-init'
 {getPassengerManifest} = require './avantik-customer-info'
 {AvantikInitBean, PassengerManifestReq} = require './lib/avantik-bean'
@@ -16,6 +17,7 @@ lookup = require 'country-code-lookup'
 {wrapErrorMessage, getSitaFileName} = require './thai-app-utils'
 
 module.exports = (robot) ->
+	log = Logger.getLogger()
 	###
 		data:
 			flight_no: flight number
@@ -26,8 +28,8 @@ module.exports = (robot) ->
 	###
 	robot.on 'sendPassengerInfo', (data, cb) ->
 
-		robot.logger.info "query passenger info of flight #{data.flight_no}"
-		robot.logger.debug "query passenger info with parameters: #{tosource data}"
+		log.info "query passenger info of flight #{data.flight_no}"
+		log.debug "query passenger info with parameters: #{tosource data}"
 		# init avantik service
 		initBean = new AvantikInitBean
 		avantik_dateformat_string = "YYYYMMDD"
@@ -42,18 +44,18 @@ module.exports = (robot) ->
 				processed = false
 				serviceInitialize client, initBean, (initErr, initResult) ->
 					if err?
-						robot.logger.error "Err: #{initErr}" 
+						log.error "Err: #{initErr}" 
 						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "#{initErr}"
 
 					else if "000" not in initResult.error.code
 						robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "#{initResult.error.code} #{initResult.error.message}"
 
 					else
-						robot.logger.debug "request: #{client.lastRequest}"
-						robot.logger.debug "response: #{client.lastResponse}"
-						robot.logger.debug "Init OK, #{initResult.error.code} #{initResult.error.message}"
+						log.debug "request: #{client.lastRequest}"
+						log.debug "response: #{client.lastResponse}"
+						log.debug "Init OK, #{initResult.error.code} #{initResult.error.message}"
 						cookie = new Cookie(client.lastResponseHeaders)
-						robot.logger.debug "Cookie: #{JSON.stringify cookie}"
+						log.debug "Cookie: #{JSON.stringify cookie}"
 
 						# set cookie
 						client.setSecurity(cookie)
@@ -68,20 +70,20 @@ module.exports = (robot) ->
 							if passErr?
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, wrapErrorMessage "err! #{JSON.stringify passErr}"
 							else
-								robot.logger.debug "request header: #{JSON.stringify client.lastRequestHeaders}"
-								robot.logger.debug "request: #{client.lastRequest}"
-								robot.logger.debug "response: #{client.lastResponse}"
+								log.debug "request header: #{JSON.stringify client.lastRequestHeaders}"
+								log.debug "request: #{client.lastRequest}"
+								log.debug "response: #{client.lastResponse}"
 
 							# convert into SITA file format
 							if !passResult? && !passResult.root?
-								robot.logger.debug "no data result message is: #{tosource passResult}"
+								log.debug "no data result message is: #{tosource passResult}"
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no passenger data found on flight #{data.flight_no} at #{data.dep_date}"
 								return
 
 							flightInfo = passResult.root.Flight[0]
 
 							if !flightInfo
-								robot.logger.debug "no data result message is: #{tosource passResult}"
+								log.debug "no data result message is: #{tosource passResult}"
 								robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "no flight found"
 								return
 							
@@ -89,7 +91,7 @@ module.exports = (robot) ->
 
 							# assume all passengers are Normal
 							travel_type = "N"
-							robot.logger.debug "flight info: #{tosource flightInfo}"
+							log.debug "flight info: #{tosource flightInfo}"
 							depDateOri = moment(data.dep_date, avantik_dateformat_string).toDate()
 							arrDateOri = moment(data.arr_date, avantik_dateformat_string).toDate()
 							depDate = dateFormat depDateOri, sita_date_format_string
@@ -125,7 +127,7 @@ module.exports = (robot) ->
 									csvGenerator = new SitaAirCarrierCSV flight_num, flightInfo.origin_rcd, depDate, depTime, flightInfo.destination_rcd, arrDate, arrTime
 
 									pnrs.forEach (pnr) ->
-										robot.logger.debug "passenger: #{JSON.stringify pnr}"
+										log.debug "passenger: #{JSON.stringify pnr}"
 										passport_expiry_string = null
 										birthday_string = ""
 										if pnr.passport_expiry_date?
@@ -144,15 +146,15 @@ module.exports = (robot) ->
 									file_name = getSitaFileName data.flight_no, data.dep_date, file_part_postfix
 
 									# save csv file
-									robot.logger.debug "starting generate target file #{file_name}"
+									log.debug "starting generate target file #{file_name}"
 									csvGenerator.commit file_name, (writeErr) ->
 										if writeErr?
-											robot.logger.error "csv file write error: #{writeErr}"
+											log.error "csv file write error: #{writeErr}"
 											robot.messageRoom config.avantik.AVANTIK_MESSAGE_ROOM, "file #{file_name}"
 											if cb?
 												return cb writeErr
 										else
-											robot.logger.info "file #{file_name} saved"
+											log.info "file #{file_name} saved"
 									
 								if cb?
 									return cb()

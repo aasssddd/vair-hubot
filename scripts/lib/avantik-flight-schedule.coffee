@@ -5,7 +5,7 @@ soap = require 'soap'
 dateFormat = require 'dateformat'
 {parseString} = require 'xml2js'
 tosource = require 'tosource'
-{log} = require './vair-logger'
+Logger = require('vair_log').Logger
 async = require 'async'
 
 ###
@@ -15,7 +15,7 @@ async = require 'async'
 ###
 
 getFlightSchedule = (data, callback) ->
-
+	log = Logger.getLogger()
 	errMsg = ""
 	schedule_api_url = config.avantik.AVANTIK_FLIGHT_ENDPOINT
 	dataFormatString = "yyyymmdd"
@@ -64,7 +64,7 @@ getFlightSchedule = (data, callback) ->
 									flight_data.push resData
 									log.debug "flight record proceed: #{resData.Flights.Details[0].flight_number[0]}"
 								else
-									log.warning "ZV#{args.FlightNumber}: no flight record found "
+									log.warn "ZV#{args.FlightNumber}: no flight record found "
 								cb()
 			,() ->
 				log.info "flight schedule data collected"

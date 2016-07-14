@@ -4,8 +4,9 @@ fs = require 'fs'
 path = require 'path'
 config = require 'app-config'
 tosource = require 'tosource'
-{log} = require './vair-logger'
+Logger = require('vair_log').Logger
 
+log = Logger.getLogger()
 class S3FileAccessHelper
 
 	AWS.config.loadFromPath './AWS.config'

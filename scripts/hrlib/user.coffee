@@ -3,7 +3,7 @@
 soap = require 'soap'
 config = require 'app-config'
 {parseString} = require 'xml2js'
-{log} = require '../lib/vair-logger'
+Logger = require('vair_log').Logger
 tosource = require 'tosource'
 moment = require 'moment'
 fs = require 'fs'
@@ -16,6 +16,7 @@ fs = require 'fs'
 		emp_email: "" Email
 ###
 module.exports.GetUserData = (criteria, callback)->
+	log = Logger.getLogger()
 	function_id = "EmpData_A"
 	options = 
 		emp_no: ""
@@ -55,22 +56,22 @@ module.exports.GetUserData = (criteria, callback)->
 					resultSet = parseResult.Collection.RECD
 
 					#save file
-					resultSet = resultSet.filter (obj) ->
+					# resultSet = resultSet.filter (obj) ->
 						
-						match = "#{obj.LEFT_DT[0]}" == ""
-						log.info "#{obj.EMP_NM_C[0]}, #{obj.LEFT_DT[0]}, #{obj.LEFT_DT[0] == ""}"
-						return match
+					# 	match = "#{obj.LEFT_DT[0]}" == ""
+					# 	log.info "#{obj.EMP_NM_C[0]}, #{obj.LEFT_DT[0]}, #{obj.LEFT_DT[0] == ""}"
+					# 	return match
 
-					# log.info "filtered result: \n#{tosource resultSet}"
+					# # log.info "filtered result: \n#{tosource resultSet}"
 
-					csv = []
-					csv.push "EMP_ID, NAME, NAME EN, GENDER, EMAIL, DEPARTMENT \r\n"
-					resultSet.forEach (obj) ->
-						csv.push "#{obj.EMP_NO[0]}, #{obj.EMP_NM_C[0]}, #{obj.ALIAS_E[0]}, #{obj.SEX_CD[0]}, #{obj.E_MAIL_H[0]}, #{obj.UNT_NM_C[0]} \r\n"
+					# csv = []
+					# csv.push "EMP_ID, NAME, NAME EN, GENDER, EMAIL, DEPARTMENT \r\n"
+					# resultSet.forEach (obj) ->
+					# 	csv.push "#{obj.EMP_NO[0]}, #{obj.EMP_NM_C[0]}, #{obj.ALIAS_E[0]}, #{obj.SEX_CD[0]}, #{obj.E_MAIL_H[0]}, #{obj.UNT_NM_C[0]} \r\n"
 
-					fs.writeFile "emplist.csv", csv + "", (err) ->
-						if err?
-							log.error "write file Error"
+					# fs.writeFile "emplist.csv", csv + "", (err) ->
+					# 	if err?
+					# 		log.error "write file Error"
 
 
 					# filtering

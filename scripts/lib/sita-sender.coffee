@@ -5,13 +5,13 @@
 ###
 config = require 'app-config'
 fs = require 'fs'
-{log} = require './vair-logger'
+Logger = require('vair_log').Logger
 path = require 'path'
 Client = require('ssh2').Client
 tosource = require "tosource"
 
 module.exports.SendToSita = (file_name, callback) ->
-
+	log = Logger.getLogger()
 	ftp_retry_count = 5
 	ftp_retry_interval = 60000
 	file_path = path.resolve config.avantik.SITA_CSV_FILE_PATH, file_name
@@ -25,16 +25,16 @@ module.exports.SendToSita = (file_name, callback) ->
 		log.info "SFTP Connect error, #{err}"
 		callback err
 	.on "timeout", ()->
-		log.warning "[ftp] timeout"
+		log.warn "[ftp] timeout"
 	.on "close", (err) ->
 		if file_uploaded
 			return
 		if ftp_retry_count < 1
 			return callback "ftp connect error", null
-		log.warning "[ftp] closed unexpected"
+		log.warn "[ftp] closed unexpected"
 		ftp_retry_count--
-		log.warning "retry left #{ftp_retry_count} times..."
-		log.warning "wait #{ftp_retry_interval / 1000} seconds to reconnect..."
+		log.warn "retry left #{ftp_retry_count} times..."
+		log.warn "wait #{ftp_retry_interval / 1000} seconds to reconnect..."
 		con = this
 		setTimeout ()->
 			con.connect {
@@ -45,7 +45,7 @@ module.exports.SendToSita = (file_name, callback) ->
 			}
 		, ftp_retry_interval
 	.on "error", () ->
-		log.warning "[ftp] error"
+		log.warn "[ftp] error"
 	.on "ready", ()->
 		log.info "SFTP Client: ready"
 		conn.sftp (conErr, sftp) ->

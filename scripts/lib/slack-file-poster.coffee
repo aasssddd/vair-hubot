@@ -8,13 +8,14 @@
 FormData = require 'form-data'
 fs = require 'fs'
 config = require 'app-config'
-{log} = require './vair-logger'
+Logger = require('vair_log').Logger
 async = require 'async'
 request = require 'request'
 tosource = require 'tosource'
 path = require 'path'
 
 postFileToSlack = (fileName, channel, callback)->
+	log = Logger.getLogger()
 	slackFileUploadEndpoint = "https://slack.com/api/files.upload"
 	filePath = path.resolve config.avantik.SITA_CSV_FILE_PATH, fileName
 	log.info "file path is #{filePath}"

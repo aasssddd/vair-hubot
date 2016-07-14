@@ -11,16 +11,19 @@
 #
 {GetUserData} = require './hrlib/user'
 tosource = require 'tosource'
+Logger = require('vair_log').Logger
 
 module.exports = (robot) ->
+	log = Logger.getLogger()
+	# robot.logger = Logger.getLogger()
 	robot.respond /find email\s*(.*)?/i, (res) ->
 		options = 
 			emp_email: res.match[1]
 
-		robot.logger.info "options: #{tosource options}"
+		log.info "options: #{tosource options}"
 		GetUserData options, (err, data)->
 			if err?
-				robot.logger.error "Errrr.... #{err}"
+				log.error "Errrr.... #{err}"
 				res.reply "Errrrrr....#{err}"
 			else
 				res.reply "#{options.emp_email} 的資訊如下:"
@@ -32,10 +35,10 @@ module.exports = (robot) ->
 		options = 
 			emp_name: res.match[1]
 
-		robot.logger.info "options: #{tosource options}"
+		log.info "options: #{tosource options}"
 		GetUserData options, (err, data)->
 			if err?
-				robot.logger.error "Errrr.... #{err}"
+				log.error "Errrr.... #{err}"
 				res.reply "Errrrrr....#{err}"
 			else
 				res.reply "#{options.emp_name} 的資訊如下:"
@@ -46,10 +49,10 @@ module.exports = (robot) ->
 		options = 
 			emp_no: res.match[1]
 
-		robot.logger.info "options: #{tosource options}"
+		log.info "options: #{tosource options}"
 		GetUserData options, (err, data)->
 			if err?
-				robot.logger.error "Errrr.... #{err}"
+				log.error "Errrr.... #{err}"
 				res.reply "Errrrrr....#{err}"
 			else
 				if data.length <= 0

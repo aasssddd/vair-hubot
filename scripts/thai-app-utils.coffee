@@ -5,11 +5,12 @@ moment = require 'moment'
 fs = require 'fs'
 config = require 'app-config'
 tosource = require 'tosource'
-{log} = require './lib/vair-logger'
+Logger = require('vair_log').Logger
 rimraf = require 'rimraf'
 mkdirp = require 'mkdirp'
 dateFormat = require 'dateformat'
 
+log = Logger.getLogger()
 wrapErrorMessage = (msg) ->
 	return "Oops! Send passenger manifest to SITA fail! Error Reason:#{msg}"
 
@@ -62,13 +63,13 @@ checkAndWaitFileGenerate = (pattern, timeout, callback) ->
 			if search_result.length > 0
 				return callback null
 
-		log.warning "file not exist, wait for 30 seconds and retry"
+		log.warn "file not exist, wait for 30 seconds and retry"
 		setTimeout () ->
 			checkAndWaitFileGenerate pattern, (timeout - 30), callback
 		, 30000
 
 	catch ex
-		log.warning "directory not exist yet, wait for 30 seconds and retry"
+		log.warn "directory not exist yet, wait for 30 seconds and retry"
 		setTimeout ()->
 			checkAndWaitFileGenerate pattern, (timeout - 30), callback
 		, 30000

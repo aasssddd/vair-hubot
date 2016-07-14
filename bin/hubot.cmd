@@ -17,4 +17,4 @@ set HUBOT_YELP_TOKEN_SECRET=o6RkkCR_8rVRzXsoYkrAl0DR7_0
 set NODE_ENV=prod
 set TZ=Asia/Taipei
 
-npm install && node_modules\.bin\hubot.cmd --name "pal" %*
+node_modules\.bin\hubot.cmd --name "pal" %*

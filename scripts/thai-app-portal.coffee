@@ -22,9 +22,10 @@ async = require 'async'
 {SendToSita} = require './lib/sita-sender'
 {getFlightSchedule} = require './lib/avantik-flight-schedule'
 {wrapErrorMessage, getSitaFileName, sitaScheduleHouseKeeping, checkAndWaitFileGenerate} = require './thai-app-utils'
+Logger = require('vair_log').Logger
 
 module.exports = (robot) ->
-
+	log = Logger.getLogger()
 	###
 		list all schedule
 	###
@@ -57,15 +58,15 @@ module.exports = (robot) ->
 		args = 
 			flight: res.match[1]
 			fdate: moment(res.match[2], "YYYY/MM/DD").format("YYYYMMDD")
-		robot.logger.info "starting to resend data of #{JSON.stringify args}"
+		log.info "starting to resend data of #{JSON.stringify args}"
 
 		getFlightSchedule args, (err, sch_res) ->
 			if err != ""
-				robot.logger.error "Err #{err}"
+				log.error "Err #{err}"
 				robot.send "Err #{err}"
 			else
 				# set schedule task 
-				robot.logger.info "found schedule data: #{JSON.stringify sch_res}"
+				log.info "found schedule data: #{JSON.stringify sch_res}"
 				sch_res.forEach (item) ->
 
 					flightDetail = item.Flights.Details[0]
@@ -75,7 +76,7 @@ module.exports = (robot) ->
 						dep_time: string(flightDetail.planned_departure_time[0]).padLeft(4, "0").toString()
 						arr_date: flightDetail.arrival_date[0].split(" ")[0]
 						arr_time: string(flightDetail.planned_arrival_time[0]).padLeft(4, "0").toString()
-					robot.logger.info "query passenger information with parameters: #{tosource data}"
+					log.info "query passenger information with parameters: #{tosource data}"
 					
 					robot.emit 'sendPassengerInfo', data, (err) ->
 						if err?
@@ -89,21 +90,21 @@ module.exports = (robot) ->
 								search_result = files.filter (file_name) ->
 									match = file_name.indexOf pattern
 									if match > -1
-										robot.logger.info "file #{file_name} matches #{pattern}"
+										log.info "file #{file_name} matches #{pattern}"
 									return match > -1
 								if search_result.length >= 1
 									search_result.forEach (fileObj) ->
-										robot.logger.info "starting send ftp file"
+										log.info "starting send ftp file"
 										SendToSita fileObj, (err) ->
 											if err?
-												robot.logger.error wrapErrorMessage "#{err}"
+												log.error wrapErrorMessage "#{err}"
 												res.reply "send file to SITA error, maybe something broken, pls try later or send manually"
 											else
 												res.reply "file #{fileObj} has sent to sita"
 												postFileToSlack fileObj, config.avantik.AVANTIK_MESSAGE_ROOM, (err, body) ->
 													if err?
-														robot.logger.error "post file to slack fail: #{err}"
+														log.error "post file to slack fail: #{err}"
 														res.reply "post file to slack fail #{err}"
 													else
-														robot.logger.info "file posted to slack"
-														robot.logger.info "slack post result: #{body}"
+														log.info "file posted to slack"
+														log.info "slack post result: #{body}"

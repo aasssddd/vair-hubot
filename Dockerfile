@@ -1,6 +1,8 @@
 FROM centos:centos6
 RUN yum install -y epel-release
-RUN yum install -y nodejs npm
+RUN curl --silent --location https://rpm.nodesource.com/setup_4.x | bash -
+RUN yum install -y nodejs
+RUN npm install npm -g
 RUN npm install -g coffee-script
 ENV HUBOT_ANNOUNCE_ROOMS /william_test_hubot,general
 ENV HUBOT_FORECAST_API_KEY 2f1e78e70afa568465b92e1331f9bc31
@@ -19,6 +21,7 @@ ENV HUBOT_YELP_TOKEN_SECRET o6RkkCR_8rVRzXsoYkrAl0DR7_0
 ENV NODE_ENV=prod
 ENV TZ=Asia/Taipei
 COPY . vair_robot
-COPY run_file /
+WORKDIR vair_robot
 VOLUME ["/logs"]
-CMD ["sh", "startRobot.sh"]
+# ENTRYPOINT "bin/hubot -a shell"
+CMD ["sh", "bin/hubot", "-a", "slack"]

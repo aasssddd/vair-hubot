@@ -9,8 +9,10 @@
 soap = require 'soap'
 {parseString} = require 'xml2js'
 {AvantikInitBean} = require './lib/avantik-bean'
+Logger = require('vair_log').Logger
 
 module.exports = (robot) ->
+	log = Logger.getLogger()
 	robot.respond /avantik service initialize/i, (res) ->
 		initReq = new AvantikInitBean() 
 		soapRes = soap.createClient initReq.url, (err, client) ->
@@ -18,15 +20,15 @@ module.exports = (robot) ->
 				res.reply "Err! #{err}"
 
 			serviceInitialize client, initReq, (err, soapResult) ->
-				robot.logger.debug "request: #{client.lastRequest}"
-				robot.logger.debug "response: #{client.lastResponse}"
-				robot.logger.debug "response header: #{JSON.stringify client.lastResponseHeaders}"
+				log.debug "request: #{client.lastRequest}"
+				log.debug "response: #{client.lastResponse}"
+				log.debug "response header: #{JSON.stringify client.lastResponseHeaders}"
 				if err?
 					res.reply "Err: #{err}"
 				else 
-					robot.logger.debug JSON.stringify soapResult, null, 41
+					log.debug JSON.stringify soapResult, null, 41
 					if "000" in soapResult.error.code
-						robot.logger.debug "OK, #{soapResult.error.message}"
+						log.debug "OK, #{soapResult.error.message}"
 					else
 						res.reply "Not OK, #{soapResult.error.code} #{soapResult.error.message}"
 
