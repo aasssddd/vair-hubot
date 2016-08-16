@@ -1,8 +1,8 @@
 // sita.js
 module.exports = {
-	FTP_HOST: "cp.thai-apps.com",
+	FTP_HOST: "thai app ftp url",
+	USER_NAME: "user name",
 	FTP_PORT: 22,
-	USER_NAME: "ZV",
-	PASSWORD: "bwf6gRHdV2Tb",
+	PASSWORD: "password",
 	DATA_STORE_PATH: "data"
 }

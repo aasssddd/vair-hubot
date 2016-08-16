@@ -1,5 +1,5 @@
 // hrm.js
 module.exports = {
-	SERVICE_URL: "http://eip.vair.com.tw:8080/SCSServices/SCSService.asmx?WSDL",
+	SERVICE_URL: "hrm web service endpoint",
 	COMPANY_ID: "SCS001"
 }

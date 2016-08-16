@@ -1,11 +1,11 @@
 // avantik.js
 module.exports = {
 	AVANTIK_AGENCY_CODE: "softmobile",
-	AVANTIK_ENDPOINT: "http://vair.avantik.io/TikAeroWebAPI_PM/BookingService.asmx?WSDL",
-	AVANTIK_FLIGHT_ENDPOINT: "http://vair.avantik.io/FlightsWebservice/FlightsService.asmx?WSDL",
-	AVANTIK_USER_ACCOUNT: "softmobile",
-	AVANTIK_USER_PASSWORD: "softmobile1234",
-	AVANTIK_QUERY_FLIGHT: "005;006;007;008;009;010",
+	AVANTIK_ENDPOINT: "avantik thai app endpoint wsdl",
+	AVANTIK_FLIGHT_ENDPOINT: "avantik flight service endpoint wsdl",
+	AVANTIK_USER_ACCOUNT: "avantik user account",
+	AVANTIK_USER_PASSWORD: "avantik user password",
+	AVANTIK_QUERY_FLIGHT: "flight1;flight2;flight3",
 	SITA_CSV_FILE_PATH: "./temp/",
 	AVANTIK_MESSAGE_ROOM: "#general",
 	SLACK_FILE_UPLOAD_TOKEN: "slack file upload token",
