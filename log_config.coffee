@@ -10,4 +10,4 @@ module.exports =
 	
 	logentries: 
 		"level": "warn"
-		"token": "98ee9ad3-441d-4582-bb1d-8efa9c15d21f"
+		"token": "put your logentries token here"
